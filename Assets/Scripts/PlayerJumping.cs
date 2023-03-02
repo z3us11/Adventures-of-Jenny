@@ -3,20 +3,20 @@ using UnityEngine;
 
 public class PlayerJumping : MonoBehaviour
 {
+    [SerializeField] VariableJoystick joystick;
+    [SerializeField] private float perfectJumpTime = 0.1f;
+    [SerializeField] private float jumpBufferTime;
+    [SerializeField] private float jumpHeight;
+    [SerializeField] private Transform groundCheck;
+    [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private float horizontalSpeed = 8f;
+
     private float horizontal;
-    private float speed = 8f;
     private bool isFacingRight = true;
 
     private bool isJumping;
     private float coyoteTime = 0.2f;
     private float coyoteTimeCounter;
-
-    [SerializeField] private float perfectJumpTime = 0.1f;
-    //[SerializeField] private float 
-    [SerializeField] private float jumpBufferTime;
-    [SerializeField] private float jumpHeight;
-    [SerializeField] private Transform groundCheck;
-    [SerializeField] private LayerMask groundLayer;
 
     Rigidbody2D rb;
 
@@ -32,7 +32,7 @@ public class PlayerJumping : MonoBehaviour
 
     private void Update()
     {
-        horizontal = Input.GetAxisRaw("Horizontal");
+        horizontal = joystick.Horizontal;
 
         //if (IsGrounded())
         //{
@@ -110,10 +110,12 @@ public class PlayerJumping : MonoBehaviour
 
     private void StartJumpBufferCounter()
     {
-        if (Input.GetButtonDown("Jump"))
+        //if (Input.GetButtonDown("Jump"))
+        if(joystick.JoystickReleased)
         {
             jumpBufferCounter = jumpBufferTime;
             jumpTime = 0;
+            joystick.JoystickReleased = false;
         }
         else
         {
@@ -141,7 +143,7 @@ public class PlayerJumping : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
+        rb.velocity = new Vector2(horizontal * horizontalSpeed, rb.velocity.y);
     }
 
     private bool IsGrounded()
