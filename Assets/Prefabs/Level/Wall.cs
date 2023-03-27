@@ -5,9 +5,6 @@ using UnityEngine;
 public class Wall : MonoBehaviour
 {
     LevelGenerator parentObj;
-    bool isLeftWall;
-    public bool IsLeftWall { get { return isLeftWall; } set { isLeftWall = value; } }
-
     private void Start()
     {
         parentObj = transform.parent.parent.GetComponent<LevelGenerator>();
@@ -21,7 +18,7 @@ public class Wall : MonoBehaviour
     {
         if (collision.transform.CompareTag("regen"))
         {
-            parentObj.PlaceWall(transform.parent, isLeftWall);
+            parentObj.PlaceWall(transform.parent);
         }
     }
 
