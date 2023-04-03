@@ -10,6 +10,7 @@ public class GameOver : MonoBehaviour
         if (collision.transform.CompareTag("regen"))
         {
             Debug.Log("Game Over! Restarting");
+            ScoreManager.instance.UpdateFinalScores();
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
     }

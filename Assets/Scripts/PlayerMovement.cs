@@ -12,7 +12,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private LayerMask wallLayer;
     [SerializeField] private float horizontalSpeed = 8f;
     [SerializeField] private float wallSlidingSpeed = 5f;
-
+    [SerializeField] private GameObject jumpParticleEffect;
 
     //Wall Sliding and Jumping
     [Header("Wall Jump")]
@@ -88,27 +88,28 @@ public class PlayerMovement : MonoBehaviour
         //rb.velocity = new Vector2(horizontal * horizontalSpeed * Time.deltaTime, rb.velocity.y);
     }
 
+    [System.Obsolete]
     private void VariableJumping()
     {
-        if (IsGrounded() && jumpBufferCounter > 0)
+        if (IsGrounded() && jumpBufferCounter > 0 && rb.velocity.y == 0)
         {
             if (jumpTime != 0)
             {
                 if (jumpTime > 0 && jumpTime < perfectJumpTime)
                 {
-                    if (jumpMultiplier < 4)
+                    if (jumpMultiplier < 5)
                         jumpMultiplier++;
-                    Debug.Log($"<color=magenta>PERFECT : {jumpTime.ToString("F3")}</color> |  {jumpMultiplier}");
+                    //Debug.Log($"<color=magenta>PERFECT : {jumpTime.ToString("F3")}</color> |  {jumpMultiplier}");
                 }
                 else if (jumpTime > perfectJumpTime && jumpTime < perfectJumpTime*3)
                 {
                     jumpMultiplier = 2f;
-                    Debug.Log($"<color=cyan>GREAT : {jumpTime.ToString("F3")}</color> |  {jumpMultiplier}");
+                    //Debug.Log($"<color=cyan>GREAT : {jumpTime.ToString("F3")}</color> |  {jumpMultiplier}");
                 }
                 else if (jumpTime > perfectJumpTime*3)
                 {
                     jumpMultiplier = 1f;
-                    Debug.Log($"<color=yellow>OK : {jumpTime.ToString("F3")}</color> | {jumpMultiplier}");
+                    //Debug.Log($"<color=yellow>OK : {jumpTime.ToString("F3")}</color> | {jumpMultiplier}");
                 }
 
             }
@@ -117,24 +118,37 @@ public class PlayerMovement : MonoBehaviour
             {
                 if (timeOnGround > 0 && timeOnGround < perfectJumpTime)
                 {
-                    if (jumpMultiplier < 4)
+                    if (jumpMultiplier < 5)
                         jumpMultiplier++;
-                    Debug.Log($"<color=magenta>PERFECT : {timeOnGround.ToString("F3")}</color> | {jumpMultiplier}");
+                    //Debug.Log($"<color=magenta>PERFECT : {timeOnGround.ToString("F3")}</color> | {jumpMultiplier}");
                 }
                 else if (timeOnGround > perfectJumpTime && timeOnGround < perfectJumpTime*3)
                 {
                     jumpMultiplier = 2f;
-                    Debug.Log($"<color=cyan>GREAT : {timeOnGround.ToString("F3")}</color> | {jumpMultiplier}" );
+                    //Debug.Log($"<color=cyan>GREAT : {timeOnGround.ToString("F3")}</color> | {jumpMultiplier}" );
                 }
                 else if (timeOnGround > perfectJumpTime*3)
                 {
                     jumpMultiplier = 1;
-                    Debug.Log($"<color=yellow>OK : {timeOnGround.ToString("F3")}</color> | {jumpMultiplier}");
+                    //Debug.Log($"<color=yellow>OK : {timeOnGround.ToString("F3")}</color> | {jumpMultiplier}");
                 }
             }
 
             //Jumps to a specific jump height
             rb.velocity = new Vector2(rb.velocity.x, Mathf.Sqrt(-2.0f * rb.gravityScale * Physics2D.gravity.y * jumpHeight * jumpMultiplier));
+            var particle = Instantiate(jumpParticleEffect, transform.GetChild(3).position, Quaternion.identity);
+            if (jumpMultiplier == 2)
+            {
+                particle.GetComponent<ParticleSystem>().startColor = Color.yellow;
+                particle.GetComponent<ParticleSystem>().startSize = 0.6f;
+            }
+            else if(jumpMultiplier > 2)
+            {
+                particle.GetComponent<ParticleSystem>().startColor = Color.red;
+                particle.GetComponent<ParticleSystem>().startSize = 0.2f*jumpMultiplier;
+            }
+
+            Destroy(particle, 1f);
 
             jumpBufferCounter = 0;
             isJumping = true;
@@ -143,7 +157,6 @@ public class PlayerMovement : MonoBehaviour
 
     private void StartJumpBufferCounter()
     {
-        //if (Input.GetButtonDown("Jump"))
         if(joystick.JoystickReleased)
         {
             jumpBufferCounter = jumpBufferTime;
@@ -155,20 +168,6 @@ public class PlayerMovement : MonoBehaviour
             if (jumpBufferCounter >= 0)
                 jumpBufferCounter -= Time.deltaTime;
             jumpTime += Time.deltaTime;
-            
-            //if (jumpTime > 0 && jumpTime < perfectJumpTime)
-            //{
-            //    playerColor.color = Color.magenta;
-            //}
-            //else if (jumpTime > perfectJumpTime && jumpTime < perfectJumpTime * 3)
-            //{
-            //    playerColor.color = Color.cyan;
-            //}
-            //else if (jumpTime > perfectJumpTime * 3)
-            //{
-            //    playerColor.color = Color.yellow;
-            //}
-            //Debug.Log(jumpTime);
         }
     }
 
@@ -181,28 +180,10 @@ public class PlayerMovement : MonoBehaviour
             {
                 timeOnGround += Time.deltaTime;
             }
-
-            //if (timeOnGround > 0 && timeOnGround < perfectJumpTime)
-            //{
-            //    playerColor.color = Color.magenta;
-            //}
-            //else if (timeOnGround > perfectJumpTime && timeOnGround < perfectJumpTime * 3)
-            //{
-            //    playerColor.color = Color.blue;
-            //}
-            //else if (timeOnGround > perfectJumpTime * 3)
-            //{
-            //    playerColor.color = Color.yellow;
-            //}
-
-            //if(!joystick.JoystickReleased)
-            //    horizontal = joystick.Horizontal;
         }
         else
         {
             timeOnGround = 0;
-            //if (joystick.Horizontal != 0)
-            //    horizontal = joystick.Horizontal;
         }
     }
 
