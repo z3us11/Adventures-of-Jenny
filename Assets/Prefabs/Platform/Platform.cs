@@ -2,13 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using System;
 
 public abstract class Platform : MonoBehaviour
 {
     int index;
     public int Index { get { return index; } set { index = value; } }
-    PlatformTypes type;
-    public PlatformTypes Type { get { return type; } set { type = value; } }
+    Type type;
+    public Type Type { get { return type; } set { type = value; } }
 
     public static Platform lastPlatform;
     PlatformGenerator platformGeneratorObj;
@@ -50,6 +51,11 @@ public abstract class Platform : MonoBehaviour
         {
             if(platformGeneratorObj == null)
                 platformGeneratorObj = transform.parent.GetComponent<PlatformGenerator>();
+            gameObject.SetActive(false);
+
+            gameObject.TryGetComponent(type, out Component comp);
+            ObjectPool.Add(comp);
+
             platformGeneratorObj.PlacePlatform();
         }
     }

@@ -40,6 +40,10 @@ public class PlayerMovement : MonoBehaviour
     float timeOnGround = 0;
     float jumpMultiplier = 1f;
 
+    bool perfectJump = false;
+    bool steppedOnObstacle = false;
+    bool receivingDamage = false;
+
     //float distanceFromGround;
 
     private void Awake()
@@ -93,10 +97,12 @@ public class PlayerMovement : MonoBehaviour
     {
         if (IsGrounded() && jumpBufferCounter > 0 && rb.velocity.y == 0)
         {
+            perfectJump = false;
             if (jumpTime != 0)
             {
                 if (jumpTime > 0 && jumpTime < perfectJumpTime)
                 {
+                    perfectJump = true;
                     if (jumpMultiplier < 5)
                         jumpMultiplier++;
                     //Debug.Log($"<color=magenta>PERFECT : {jumpTime.ToString("F3")}</color> |  {jumpMultiplier}");
@@ -118,6 +124,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 if (timeOnGround > 0 && timeOnGround < perfectJumpTime)
                 {
+                    perfectJump = true;
                     if (jumpMultiplier < 5)
                         jumpMultiplier++;
                     //Debug.Log($"<color=magenta>PERFECT : {timeOnGround.ToString("F3")}</color> | {jumpMultiplier}");
@@ -134,8 +141,29 @@ public class PlayerMovement : MonoBehaviour
                 }
             }
 
+            if(steppedOnObstacle)
+            {
+                if(receivingDamage && !perfectJump)
+                {
+                    Debug.Log("Taking damage");
+                    jumpMultiplier = 0.5f;
+                }
+                else
+                {
+                    if(!perfectJump)
+                    {
+                        Debug.Log("Resetting jump");
+                        jumpMultiplier = 1f;
+                    }
+                }
+                receivingDamage = false;
+                steppedOnObstacle = false;
+            }
+
+            Debug.Log("Jumping " + jumpMultiplier);
+
             //Jumps to a specific jump height
-            rb.velocity = new Vector2(rb.velocity.x, Mathf.Sqrt(-2.0f * rb.gravityScale * Physics2D.gravity.y * jumpHeight * jumpMultiplier));
+            rb.velocity = new Vector2(0, Mathf.Sqrt(-2.0f * rb.gravityScale * Physics2D.gravity.y * jumpHeight * jumpMultiplier));
             var particle = Instantiate(jumpParticleEffect, transform.GetChild(3).position, Quaternion.identity);
             if (jumpMultiplier == 2)
             {
@@ -191,7 +219,7 @@ public class PlayerMovement : MonoBehaviour
     {
     }
 
-    private bool IsGrounded()
+    public bool IsGrounded()
     {
         //return Physics2D.Raycast(transform.position, Vector2.down, distanceFromGround);
         if (rb.velocity.y > 0)
@@ -281,6 +309,16 @@ public class PlayerMovement : MonoBehaviour
             localScale.x *= -1f;
             transform.localScale = localScale;
         }
+    }
+
+
+
+    public bool SteppingOnObstacle(bool receivingDamage)
+    {
+        Debug.Log("Stepping on obstacle");
+        steppedOnObstacle = true;
+        this.receivingDamage = receivingDamage;
+        return false;
     }
 
 }
