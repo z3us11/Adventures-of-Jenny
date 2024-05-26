@@ -1,0 +1,574 @@
+using DG.Tweening;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+namespace Platformer
+{
+    public class PlayerController : MonoBehaviour
+    {
+        [Header("Ability Unlocks")]
+        public bool canLedgeGrab;
+        public bool canWallJump;
+        public bool canWallRun;
+        public bool canSprint;
+
+        float xInput = 0;
+        float yInput = 0;
+        bool isSprintPressed = false;
+        bool isJumpPressed = false;
+        [Header("Movement")]
+        [SerializeField] float walkVelocity = 5f;
+        [SerializeField] float walkAcceleration = 10f;
+        [SerializeField] float sprintVelocity;
+        [SerializeField] float sprintAcceleration;
+        float velocity = 0;
+        float acceleration = 0;
+        float currentFrameVelocity = 0;
+        [Header("Jump")]
+        [SerializeField] float jumpHeight;
+        [SerializeField] float jumpMultiplier;
+        float jumpButtonPressedTimer;
+        bool isJumpingFromLedgeOrWall = false;
+        [SerializeField] float jumpButtonPressThreshold;
+        [SerializeField] private Transform[] groundCheck;
+        [SerializeField] private LayerMask groundLayer;
+        [Header("Ledge Grab")]
+        [SerializeField] float ledgeGrabDistance;
+        [SerializeField] LayerMask ledgeLayer;
+        bool isLedgeGrabbing;
+        bool isTouchingLedge;
+        bool isClimbingFromLedge;
+        public bool IsTouchingLedge { get { return isTouchingLedge; } set { isTouchingLedge = value; } }
+        Ledge currentLedge;
+        public Ledge CurrentLedge { get { return  currentLedge; } set {  currentLedge = value; } }
+        [Header("Wall Slide")]
+        [SerializeField] LayerMask wallLayer;
+        [SerializeField] float wallSlidingVelocity;
+        bool isScaleSet = false;
+        [Space]
+        [Header("Effects")]
+        [SerializeField] Transform playerGround;
+        [SerializeField] Transform playerWall;
+        [SerializeField] GameObject grassParticle;
+        bool isSpawningWalkParticles = false;
+
+        bool isWalking = false;
+        bool isSprinting = false;
+        bool isGrounded = false;
+        bool isSprintingWhileJumping = false;
+
+        bool afterLedgeGrab = false;
+
+        private Rigidbody2D rb;
+        private Transform visuals;
+        private Animator anim;
+
+        private void Awake()
+        {
+            rb = GetComponent<Rigidbody2D>();
+
+            visuals = transform.GetChild(0);
+            anim = visuals.GetComponent<Animator>();
+        }
+
+        void OnMoveX(InputValue inputValue)
+        {
+            xInput = inputValue.Get<float>();
+        }
+
+        void OnMoveY(InputValue inputValue)
+        {
+            yInput = inputValue.Get<float>();
+        }
+
+        void OnSprint(InputValue inputValue)
+        {
+            isSprintPressed = inputValue.Get<float>() != 0 ? true : false;
+        }
+
+        void OnJump(InputValue inputValue)
+        {
+            isJumpPressed = inputValue.Get<float>() != 0 ? true : false;
+        }
+
+        private void FixedUpdate()
+        {
+            MoveWithAcceleration();
+        }
+
+        private void MoveWithAcceleration()
+        {
+            if (isLedgeGrabbing)
+                return;
+
+            // Apply acceleration
+            float targetVelocity = xInput * velocity;
+            float currentVelocity = rb.velocity.x;
+            float deltaVelocity = targetVelocity - currentVelocity;
+
+            // Clamp the delta velocity to acceleration
+            
+            
+            if (Mathf.Sign(xInput) != Mathf.Sign(rb.velocity.x))
+                deltaVelocity *= 2f;
+            deltaVelocity = Mathf.Clamp(deltaVelocity, -acceleration * Time.fixedDeltaTime, acceleration * Time.fixedDeltaTime);
+
+            // Apply the force to the rigidbody
+            rb.AddForce(new Vector2(deltaVelocity, 0), ForceMode2D.Impulse);
+            currentFrameVelocity = rb.velocity.x;
+        }
+
+        private void Update()
+        {
+            if (!isLedgeGrabbing)
+            {
+                MovementValuesIfSprinting();
+                LedgeGrab();
+
+                //Animations
+                ChangeWalkingState();
+                ChangeJumpState();
+
+                //Wall Slide
+                WallSliding();
+                WallRun();
+
+                //Effects
+                StartCoroutine(WalkParticles());
+
+                //if(afterLedgeGrab)
+                //{
+                //    if(!IsGrounded())
+                //    {
+                //        if(rb.velocity.y < 0.01f)
+                //        {
+                //            Debug.Log(rb.velocity.magnitude);
+                //            afterLedgeGrab = false;
+                //        }
+                        
+                //    }
+                //    else
+                //    { 
+                //        Debug.Log("grounded after ledge grab");
+                //        afterLedgeGrab = false;
+                //    }
+                //}
+            }
+
+            if (isTouchingLedge)
+            {
+                if(IsFacingFront() && !IsGrounded())
+                {
+                    //GrabLedge(currentLedge);
+                }
+                else
+                {
+                    if(yInput < 0)
+                    {
+                        if (currentLedge.transform.localPosition.x < 0)
+                            visuals.transform.localScale = new Vector3(1, 1, 1);
+                        else if(currentLedge.transform.localPosition.x > 0)
+                            visuals.transform.localScale = new Vector3(-1, 1, 1);
+
+                        GrabLedge(currentLedge);
+                    }
+                }
+            }
+
+            if (isLedgeGrabbing)
+            {
+                StartCoroutine(DropFromLedgeGrab());
+                StartCoroutine(ClimbFromLedgeGrab());
+            }
+
+            //else
+            //{
+            //    afterLedgeGrab = true;
+            //}
+
+            //Jumping
+            Jump();
+        }
+
+        void MovementValuesIfSprinting()
+        {
+            if (isSprintPressed)
+            {
+                if (!canSprint)
+                    return;
+
+                if (!IsGrounded())
+                {
+                    if (isSprintingWhileJumping)
+                    {
+                        velocity = sprintVelocity;
+                        acceleration = sprintAcceleration;
+                        
+                    }
+                    else
+                    {
+                        velocity = walkVelocity;
+                        acceleration = walkAcceleration;
+                    }
+                }
+                else
+                {
+                    velocity = sprintVelocity;
+                    acceleration = sprintAcceleration;
+                }
+
+            }
+            else
+            {
+                velocity = walkVelocity;
+                acceleration = walkAcceleration;
+            }
+
+            
+            if (Mathf.Abs(rb.velocity.x) > walkVelocity)
+            {
+                acceleration = sprintAcceleration;
+            }
+        }
+
+        void Jump()
+        {
+            if (isJumpPressed)
+            {
+                if (jumpButtonPressedTimer < jumpButtonPressThreshold)
+                {
+                    jumpButtonPressedTimer += Time.deltaTime;
+                }
+                else
+                {
+                    jumpButtonPressedTimer = jumpButtonPressThreshold;
+                }
+            }
+            else
+            {
+                if (jumpButtonPressedTimer > 0.01f)
+                {
+                    if (IsGrounded())
+                        ApplyJumpForce();
+
+                    if(canWallJump)
+                    {
+                        if(!IsGrounded())
+                        {
+                            if (isLedgeGrabbing)
+                            {
+                                ReleaseLedge();
+                                ApplyJumpForce(false);
+                            }
+                            else if (IsWallSliding())
+                            {
+                                ApplyJumpForce(false);
+                            }
+                        }
+                    }
+                }
+                jumpButtonPressedTimer = 0;
+            }
+        }
+
+        void ApplyJumpForce(bool isNormalJump = true)
+        {
+            if (isSprintPressed)
+                isSprintingWhileJumping = true;
+            else
+                isSprintingWhileJumping = false;
+
+            if(isNormalJump)
+            {
+                rb.velocity = new Vector2(rb.velocity.x, Mathf.Sqrt(-2.0f * rb.gravityScale * Physics2D.gravity.y * jumpHeight * jumpMultiplier * (jumpButtonPressedTimer / jumpButtonPressThreshold)));
+                SpawnGrassParticle(playerGround);
+            }
+            else
+            {
+                StartCoroutine(JumpFromLedgeOrWall());
+            }
+        }
+
+        IEnumerator JumpFromLedgeOrWall()
+        {
+            isJumpingFromLedgeOrWall = true;
+            float jumpVelocity = Mathf.Sqrt(-2.0f * rb.gravityScale * Physics2D.gravity.y * jumpHeight * jumpMultiplier);
+            rb.velocity = new Vector2(visuals.transform.localScale.x * -jumpVelocity / 1.65f, jumpVelocity / 1.25f);
+            yield return new WaitForSeconds(0.1f);
+            isJumpingFromLedgeOrWall = false;
+        }
+
+
+        private void WallSliding()
+        {
+            if (IsWallSliding())
+            {
+                if(!isScaleSet)
+                {
+                    var scaleX = visuals.transform.localScale.x;
+                    visuals.transform.localScale = new Vector3(scaleX, 1, 1);
+                }
+                rb.velocity = new Vector2(rb.velocity.x, Mathf.Clamp(rb.velocity.y, -wallSlidingVelocity, float.MaxValue));
+            }
+        }
+
+        private void WallRun()
+        {
+            if (!canWallRun)
+                return;
+            if (isLedgeGrabbing)
+                return;
+
+            if(IsWallSliding() && xInput != 0)
+            {
+                if(Mathf.Sign(xInput) == Mathf.Sign(visuals.transform.localScale.x))
+                {
+                    rb.velocity = new Vector2(rb.velocity.x, walkVelocity);
+                }
+            }
+        }
+
+        
+        void LedgeGrab()
+        {
+            if (!canLedgeGrab)
+                return;
+            if (isLedgeGrabbing)
+                return;
+
+            RaycastHit2D hit;
+            hit = Physics2D.Raycast(transform.position, Vector2.right * visuals.localScale.x, ledgeGrabDistance, ledgeLayer);
+            if (hit.collider != null)
+            {
+                GrabLedge(hit.transform.GetComponent<Ledge>());
+            }
+        }
+
+        private void GrabLedge(Ledge ledge)
+        {
+            if (!canLedgeGrab)
+                return;
+            if (isLedgeGrabbing)
+                return;
+            if (isClimbingFromLedge)
+                return;
+            if(isJumpingFromLedgeOrWall)
+                return;
+
+            Debug.Log("Grabbing Ledge");
+            yInput = 0;
+            isTouchingLedge = false;
+            isLedgeGrabbing = true;
+            anim.SetBool(nameof(isLedgeGrabbing), true);
+            transform.DOMove(ledge.transform.position - new Vector3(0, 0.10f), 0.1f);
+            rb.velocity = Vector2.zero;
+            rb.gravityScale = 0;
+        }
+
+        void ReleaseLedge()
+        {
+            Debug.Log("Releasing Ledge");
+            rb.gravityScale = 4;
+            isLedgeGrabbing = false;
+            anim.SetBool(nameof(isLedgeGrabbing), false);
+            currentLedge = null;
+        }
+
+        IEnumerator DropFromLedgeGrab()
+        {
+            yield return new WaitForSeconds(0.1f);
+            if (yInput < 0)
+                ReleaseLedge();
+        }
+
+        IEnumerator ClimbFromLedgeGrab()
+        {
+            if(yInput > 0)
+            {
+                Debug.Log("Climbing");
+                isClimbingFromLedge = true;
+                ReleaseLedge();
+                rb.velocity = new Vector2(0, 15);
+                yield return new WaitForSeconds(0.1f);
+                rb.velocity = new Vector2(visuals.transform.localScale.x * 5, 0);
+                isClimbingFromLedge = false;
+            }
+        }
+
+        public bool IsGrounded()
+        {
+            if (isLedgeGrabbing)
+                return isGrounded = false;
+            //return Physics2D.Raycast(transform.position, Vector2.down, distanceFromGround);
+            //if (rb.velocity.y > 0)
+            //    return isGrounded = false;
+
+            foreach (var ground in groundCheck)
+            {
+                if (Physics2D.OverlapCircle(ground.position, 0.2f, groundLayer))
+                {
+                    return isGrounded = true;
+                }
+            }
+            return isGrounded = false;
+        }
+
+
+        private bool IsWalking()
+        {
+            isWalking = (Math.Abs(rb.velocity.x) > 0.1f) ? true : false;
+            if(isWalking)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private bool IsSprinting()
+        {
+            isSprinting = Mathf.Abs(rb.velocity.x) > walkVelocity ? true : false;
+            //if (afterLedgeGrab)
+            //    Debug.Log(Mathf.Abs(rb.velocity.x));
+            if(isSprinting)
+            {
+                return true;
+            } 
+            else
+            {
+                return false;
+            }
+        }
+
+        private bool IsWallSliding()
+        {
+            if (IsFacingFront() && !IsGrounded())
+            {
+                isScaleSet = true;
+                return true;
+            }
+            else
+            {
+                isScaleSet = false;
+                return false;
+            }
+        }
+
+        private bool IsFacingFront()
+        {
+            foreach (var ground in groundCheck)
+            {
+                if (Physics2D.OverlapCircle(ground.position, 0.1f, wallLayer))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+
+        //Animations
+        private void ChangeWalkingState()
+        {
+            anim.SetBool(nameof(isWalking), IsWalking());
+            anim.speed = IsSprinting() ? 1.5f : 1.0f;
+
+            if (IsWallSliding())
+                return;
+
+            if (rb.velocity.x > 0f)
+            {
+                visuals.localScale = new Vector3(1, 1, 1);
+            }
+            else if (rb.velocity.x < 0f)
+            {
+                visuals.localScale = new Vector3(-1, 1, 1);
+            }
+        }
+
+        private void ChangeJumpState()
+        {
+            if(rb.velocity.y > 0.1f)
+                anim.SetFloat("yVelocity", rb.velocity.y);
+            else
+                anim.SetFloat("yVelocity", 0);
+
+            if (IsGrounded())
+            {
+                anim.SetInteger("velocity", 0);
+            }
+            else
+            {
+                if (rb.velocity.y > 0)
+                {
+                    anim.SetInteger("velocity", 1);
+
+                }
+                else if (rb.velocity.y < 0)
+                {
+                    anim.SetInteger("velocity", -1);
+                }
+            }
+
+            anim.SetBool(nameof(IsGrounded), IsGrounded());
+            anim.SetBool(nameof(IsWallSliding), IsWallSliding());
+        }
+
+
+        public void UnlockAbility(AbilityType ability)
+        {
+            if(ability == AbilityType.LedgeGrab)
+            {
+                canLedgeGrab = true;
+            }
+            else if (ability == AbilityType.WallJump)
+            {
+                canWallJump = true;
+            }
+            else if(ability == AbilityType.WallRun)
+            {
+                canWallRun = true;
+            }
+            else if(ability == AbilityType.Sprint)
+            {
+                canSprint = true;
+            }
+        }
+
+        //Effects
+        private void SpawnGrassParticle(Transform location, bool isWalkParticle = false)
+        {
+            var particle = Instantiate(grassParticle, location.position, grassParticle.transform.rotation);
+            particle.transform.localPosition += new Vector3(0, 0.5f);
+            if (isWalkParticle)
+            {
+                var particleSystem = particle.GetComponent<ParticleSystem>();
+                particleSystem.startSpeed = 2;
+                particleSystem.gravityModifier = 0.5f;
+                var emission = particleSystem.emission;
+                emission.SetBursts(new ParticleSystem.Burst[]{
+                new ParticleSystem.Burst(0.0f, 2)});
+            }
+            //particle.transform.localRotation = new Quaternion(-90, 0, 0, 0);
+            Destroy(particle, 1);
+        }
+
+        private IEnumerator WalkParticles()
+        {
+            if(isWalking && IsGrounded() && !isSpawningWalkParticles)
+            {
+                isSpawningWalkParticles = true;
+                SpawnGrassParticle(playerGround, true);
+                yield return new WaitForSeconds(0.25f);
+                isSpawningWalkParticles = false;
+            }
+        }
+    }
+}
+

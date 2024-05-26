@@ -13,7 +13,7 @@ TagManager:
   - Water
   - UI
   - Wall
-  - 
+  - Ledge
   - 
   - 
   - 
@@ -39,6 +39,18 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Skybox
+    uniqueID: 3299465417
+    locked: 0
+  - name: Background
+    uniqueID: 3216549907
+    locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: PlayArea
+    uniqueID: 62663945
+    locked: 0
+  - name: Foreground
+    uniqueID: 2165975741
     locked: 0

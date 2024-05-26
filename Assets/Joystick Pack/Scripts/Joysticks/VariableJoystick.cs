@@ -12,6 +12,7 @@ public class VariableJoystick : Joystick
 
     private Vector2 fixedPosition = Vector2.zero;
 
+    public bool JoystickTapped;
     bool joystickReleased = false;
     public bool JoystickReleased { get { return joystickReleased; } set { joystickReleased = value; } }
 
@@ -42,6 +43,7 @@ public class VariableJoystick : Joystick
             background.gameObject.SetActive(true);
         }
 
+        JoystickTapped = true;
         //joystickReleased = false;
         base.OnPointerDown(eventData);
     }
