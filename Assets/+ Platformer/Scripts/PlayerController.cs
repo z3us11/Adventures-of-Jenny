@@ -35,6 +35,8 @@ namespace Platformer
         [SerializeField] float jumpMultiplier;
         float jumpButtonPressedTimer;
         bool isJumpingFromLedgeOrWall = false;
+        [SerializeField] float perfectJumpTime;
+        [SerializeField] float perfectJumpTimeWindow;
         [SerializeField] float jumpButtonPressThreshold;
         [SerializeField] private Transform[] groundCheck;
         [SerializeField] private LayerMask groundLayer;
@@ -57,6 +59,9 @@ namespace Platformer
         [SerializeField] Transform playerGround;
         [SerializeField] Transform playerWall;
         [SerializeField] GameObject grassParticle;
+        [Space]
+        [SerializeField] GameObject jumpEffectRing;
+        [SerializeField] GameObject jumpEffectSprite;
         bool isSpawningWalkParticles = false;
         [Header("Camera")]
         [SerializeField] CinemachineVirtualCamera virtualCamera;
@@ -268,19 +273,69 @@ namespace Platformer
         {
             if (isJumpPressed)
             {
+                jumpEffectRing.SetActive(true);
                 if (jumpButtonPressedTimer < jumpButtonPressThreshold)
                 {
                     jumpButtonPressedTimer += Time.deltaTime;
+                    if(jumpButtonPressedTimer <= perfectJumpTime)
+                    {
+                        float scale = jumpEffectRing.transform.localScale.x;
+                        scale = Remap(jumpButtonPressedTimer, 0, perfectJumpTime, 2, 0);
+                        jumpEffectRing.transform.localScale = new Vector3(scale, scale);
+                    }
+
+                    if(jumpButtonPressedTimer > (perfectJumpTime - perfectJumpTimeWindow) && jumpButtonPressedTimer < (perfectJumpTime + perfectJumpTimeWindow))
+                    {
+                        jumpEffectSprite.SetActive(true);
+                        jumpEffectSprite.GetComponent<SpriteRenderer>().sprite = visuals.GetComponent<SpriteRenderer>().sprite;
+                    }
+                    else
+                    {
+                        jumpEffectSprite.SetActive(false);
+                    }
+
                 }
                 else
                 {
+                    isJumpPressed = false;
                     jumpButtonPressedTimer = jumpButtonPressThreshold;
+                    jumpEffectRing.SetActive(false);
+                    jumpEffectSprite.SetActive(false);
                 }
             }
             else
             {
                 if (jumpButtonPressedTimer > 0.01f)
                 {
+                    if (jumpButtonPressedTimer > (perfectJumpTime - perfectJumpTimeWindow) && jumpButtonPressedTimer < (perfectJumpTime + perfectJumpTimeWindow))
+                    {
+                        jumpButtonPressedTimer = perfectJumpTime;
+                        jumpMultiplier = 1;
+                    }
+                    else
+                    {
+                        jumpMultiplier = (perfectJumpTime - Mathf.Abs(jumpButtonPressedTimer - perfectJumpTime)) / perfectJumpTime;
+                        
+                    }
+
+                    if (jumpButtonPressedTimer > perfectJumpTime && jumpMultiplier < 0.75f)
+                        jumpMultiplier = 0.75f;
+                    else if (jumpMultiplier < 0.25f)
+                        jumpMultiplier = 0.25f;
+
+                    Debug.Log(Mathf.Abs(jumpButtonPressedTimer - perfectJumpTime)+ " | " + jumpMultiplier);
+
+                    //float jumpAccuracy = Mathf.Abs(jumpButtonPressedTimer - perfectJumpTime);
+                    //if (jumpAccuracy > jumpButtonPressThreshold - perfectJumpTime - 0.1f)
+                    //    jumpAccuracy = perfectJumpTime - perfectJumpTimeWindow;
+                    //if (jumpAccuracy < perfectJumpTimeWindow)
+                    //    jumpMultiplier = 1;
+                    //else
+                    //    jumpMultiplier = Remap(jumpAccuracy, perfectJumpTimeWindow, perfectJumpTime, 1, 0.25f);
+
+                    //if (jumpButtonPressedTimer > perfectJumpTime)
+                    //    jumpButtonPressedTimer = perfectJumpTime;
+
                     if (IsGrounded())
                         ApplyJumpForce();
 
@@ -301,6 +356,8 @@ namespace Platformer
                     }
                 }
                 jumpButtonPressedTimer = 0;
+                jumpEffectRing.SetActive(false);
+                jumpEffectSprite.SetActive(false);
             }
         }
 
@@ -313,7 +370,8 @@ namespace Platformer
 
             if(isNormalJump)
             {
-                rb.velocity = new Vector2(rb.velocity.x, Mathf.Sqrt(-2.0f * rb.gravityScale * Physics2D.gravity.y * jumpHeight * jumpMultiplier * (jumpButtonPressedTimer / jumpButtonPressThreshold)));
+                //rb.velocity = new Vector2(rb.velocity.x, Mathf.Sqrt(-2.0f * rb.gravityScale * Physics2D.gravity.y * jumpHeight * jumpMultiplier * (jumpButtonPressedTimer / perfectJumpTime)));
+                rb.velocity = new Vector2(rb.velocity.x, Mathf.Sqrt(-2.0f * rb.gravityScale * Physics2D.gravity.y * jumpHeight * jumpMultiplier));
                 SpawnGrassParticle(playerGround);
             }
             else
@@ -325,7 +383,7 @@ namespace Platformer
         IEnumerator JumpFromLedgeOrWall()
         {
             isJumpingFromLedgeOrWall = true;
-            float jumpVelocity = Mathf.Sqrt(-2.0f * rb.gravityScale * Physics2D.gravity.y * jumpHeight * jumpMultiplier);
+            float jumpVelocity = Mathf.Sqrt(-2.0f * rb.gravityScale * Physics2D.gravity.y * jumpHeight);
             rb.velocity = new Vector2(visuals.transform.localScale.x * -jumpVelocity / 1.65f, jumpVelocity / 1.25f);
             yield return new WaitForSeconds(0.1f);
             isJumpingFromLedgeOrWall = false;
@@ -669,6 +727,15 @@ namespace Platformer
                 return;
             virtualCamera.Follow = null;
             virtualCamera.transform.DOMoveY(virtualCamera.transform.localPosition.y - 4, 0.5f);
+        }
+
+
+
+        //Utility
+        float Remap(float x, float in_min, float in_max, float out_min, float out_max)
+        {
+            return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+
         }
 
 
