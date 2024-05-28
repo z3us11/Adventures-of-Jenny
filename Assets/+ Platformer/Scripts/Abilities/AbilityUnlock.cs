@@ -5,14 +5,15 @@ using UnityEngine;
 
 public class AbilityUnlock : MonoBehaviour
 {
-    public AbilityType abilityType;
+    public AbilitySO ability;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.gameObject.CompareTag("Player"))
         {
             var playerController = collision.transform.parent.GetComponent<PlayerController>();
-            playerController.UnlockAbility(abilityType);
+            playerController.UnlockAbility(ability.abilityType);
+            playerController.abilityUnlockPanel.SetupAbilityUnlockPanel(ability);
             gameObject.SetActive(false);
         }
     }

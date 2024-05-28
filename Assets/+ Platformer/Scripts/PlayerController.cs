@@ -1,3 +1,4 @@
+using Cinemachine;
 using DG.Tweening;
 using System;
 using System.Collections;
@@ -10,6 +11,7 @@ namespace Platformer
 {
     public class PlayerController : MonoBehaviour
     {
+        public bool canPlayerMove = true;
         [Header("Ability Unlocks")]
         public bool canLedgeGrab;
         public bool canWallJump;
@@ -46,6 +48,7 @@ namespace Platformer
         Ledge currentLedge;
         public Ledge CurrentLedge { get { return  currentLedge; } set {  currentLedge = value; } }
         [Header("Wall Slide")]
+        [SerializeField] Transform wallCheck;
         [SerializeField] LayerMask wallLayer;
         [SerializeField] float wallSlidingVelocity;
         bool isScaleSet = false;
@@ -55,13 +58,25 @@ namespace Platformer
         [SerializeField] Transform playerWall;
         [SerializeField] GameObject grassParticle;
         bool isSpawningWalkParticles = false;
+        [Header("Camera")]
+        [SerializeField] CinemachineVirtualCamera virtualCamera;
+        [SerializeField] int cameraZoomedInSize;
+        [SerializeField] int cameraZoomedOutSize;
+        [SerializeField] float cameraPanSpeed;
+        bool isPlayerPanningCamera = false;
+        [Header("UI")]
+        public AbilityUnlockPanel abilityUnlockPanel;
+        [Space]
+        [Header("Other Scripts")]
+        public FlowerCollection flowerCollection;
 
         bool isWalking = false;
         bool isSprinting = false;
         bool isGrounded = false;
         bool isSprintingWhileJumping = false;
 
-        bool afterLedgeGrab = false;
+        float rightYInput = 0;
+        bool startedLooking = false;
 
         private Rigidbody2D rb;
         private Transform visuals;
@@ -95,8 +110,21 @@ namespace Platformer
             isJumpPressed = inputValue.Get<float>() != 0 ? true : false;
         }
 
+        void OnZoom(InputValue inputValue)
+        {
+            isPlayerPanningCamera = inputValue.Get<float>() != 0 ? true : false;
+        }
+
+        void OnMoveRightY(InputValue inputValue)
+        {
+            rightYInput = inputValue.Get<float>();
+        }
+
         private void FixedUpdate()
         {
+            if (!canPlayerMove)
+                return;
+
             MoveWithAcceleration();
         }
 
@@ -120,10 +148,16 @@ namespace Platformer
             // Apply the force to the rigidbody
             rb.AddForce(new Vector2(deltaVelocity, 0), ForceMode2D.Impulse);
             currentFrameVelocity = rb.velocity.x;
+
+            if (Mathf.Abs(rb.velocity.x) < 0.1f)
+                rb.velocity = new Vector2(0, rb.velocity.y);
         }
 
         private void Update()
         {
+            if(!canPlayerMove)
+                return;
+
             if (!isLedgeGrabbing)
             {
                 MovementValuesIfSprinting();
@@ -138,25 +172,7 @@ namespace Platformer
                 WallRun();
 
                 //Effects
-                StartCoroutine(WalkParticles());
-
-                //if(afterLedgeGrab)
-                //{
-                //    if(!IsGrounded())
-                //    {
-                //        if(rb.velocity.y < 0.01f)
-                //        {
-                //            Debug.Log(rb.velocity.magnitude);
-                //            afterLedgeGrab = false;
-                //        }
-                        
-                //    }
-                //    else
-                //    { 
-                //        Debug.Log("grounded after ledge grab");
-                //        afterLedgeGrab = false;
-                //    }
-                //}
+                StartCoroutine(WalkParticles(playerGround));
             }
 
             if (isTouchingLedge)
@@ -185,13 +201,26 @@ namespace Platformer
                 StartCoroutine(ClimbFromLedgeGrab());
             }
 
-            //else
-            //{
-            //    afterLedgeGrab = true;
-            //}
-
             //Jumping
             Jump();
+
+            //Camera
+            PanCamera();
+
+            if (rightYInput == 0)
+            {
+                LookAtPlayer();
+                startedLooking = false;
+            }
+            else
+            {
+                if (rightYInput > 0)
+                    LookUp();
+                else if (rightYInput < 0)
+                    LookDown();
+                startedLooking = true;
+            }
+
         }
 
         void MovementValuesIfSprinting()
@@ -313,6 +342,7 @@ namespace Platformer
                     visuals.transform.localScale = new Vector3(scaleX, 1, 1);
                 }
                 rb.velocity = new Vector2(rb.velocity.x, Mathf.Clamp(rb.velocity.y, -wallSlidingVelocity, float.MaxValue));
+                StartCoroutine(WalkParticles(playerWall));
             }
         }
 
@@ -328,6 +358,7 @@ namespace Platformer
                 if(Mathf.Sign(xInput) == Mathf.Sign(visuals.transform.localScale.x))
                 {
                     rb.velocity = new Vector2(rb.velocity.x, walkVelocity);
+                    StartCoroutine(WalkParticles(playerWall));
                 }
             }
         }
@@ -364,7 +395,7 @@ namespace Platformer
             isTouchingLedge = false;
             isLedgeGrabbing = true;
             anim.SetBool(nameof(isLedgeGrabbing), true);
-            transform.DOMove(ledge.transform.position - new Vector3(0, 0.10f), 0.1f);
+            transform.DOMove(ledge.transform.position - new Vector3(0, 0.10f), 0.2f);
             rb.velocity = Vector2.zero;
             rb.gravityScale = 0;
         }
@@ -462,6 +493,11 @@ namespace Platformer
 
         private bool IsFacingFront()
         {
+            //if (Physics2D.OverlapCircle(wallCheck.position, 0.1f, wallLayer))
+            //{
+            //    return true;
+            //}
+
             foreach (var ground in groundCheck)
             {
                 if (Physics2D.OverlapCircle(ground.position, 0.1f, wallLayer))
@@ -494,7 +530,7 @@ namespace Platformer
 
         private void ChangeJumpState()
         {
-            if(rb.velocity.y > 0.1f)
+            if(rb.velocity.y > 0.1f || rb.velocity.y < -0.1f)
                 anim.SetFloat("yVelocity", rb.velocity.y);
             else
                 anim.SetFloat("yVelocity", 0);
@@ -542,7 +578,7 @@ namespace Platformer
         }
 
         //Effects
-        private void SpawnGrassParticle(Transform location, bool isWalkParticle = false)
+        private void SpawnGrassParticle(Transform location, bool isWalkParticle = false, bool isWallParticle = false)
         {
             var particle = Instantiate(grassParticle, location.position, grassParticle.transform.rotation);
             particle.transform.localPosition += new Vector3(0, 0.5f);
@@ -554,21 +590,88 @@ namespace Platformer
                 var emission = particleSystem.emission;
                 emission.SetBursts(new ParticleSystem.Burst[]{
                 new ParticleSystem.Burst(0.0f, 2)});
+                if(isWallParticle)
+                {
+                    particle.transform.Rotate(new Vector3(0, -visuals.transform.localScale.x * 90, visuals.transform.localScale.x * 90));
+                    particleSystem.startSpeed = 1;
+                }
             }
             //particle.transform.localRotation = new Quaternion(-90, 0, 0, 0);
             Destroy(particle, 1);
         }
 
-        private IEnumerator WalkParticles()
+        private IEnumerator WalkParticles(Transform spawnPoint)
         {
-            if(isWalking && IsGrounded() && !isSpawningWalkParticles)
+            if(spawnPoint == playerGround)
             {
-                isSpawningWalkParticles = true;
-                SpawnGrassParticle(playerGround, true);
-                yield return new WaitForSeconds(0.25f);
-                isSpawningWalkParticles = false;
+                if (isWalking && IsGrounded() && !isSpawningWalkParticles)
+                {
+                    isSpawningWalkParticles = true;
+                    SpawnGrassParticle(spawnPoint, true);
+                    yield return new WaitForSeconds(0.25f);
+                    isSpawningWalkParticles = false;
+                }
+            }
+            else if (spawnPoint == playerWall)
+            {
+                if (IsWallSliding() && !isSpawningWalkParticles)
+                {
+                    isSpawningWalkParticles = true;
+                    SpawnGrassParticle(spawnPoint, true, true);
+                    yield return new WaitForSeconds(0.35f);
+                    isSpawningWalkParticles = false;
+                }
+            }
+
+        }
+
+        //Camera 
+        void PanCamera()
+        {
+            float panSpeed = cameraPanSpeed;
+            if (isPlayerPanningCamera)
+                panSpeed *= 5;
+
+            if(IsSprinting() || isPlayerPanningCamera)
+            {
+                if (virtualCamera.m_Lens.OrthographicSize <= cameraZoomedOutSize)
+                {
+                    virtualCamera.m_Lens.OrthographicSize += Time.deltaTime * panSpeed;
+                }
+            }
+            else
+            {
+                if (virtualCamera.m_Lens.OrthographicSize >= cameraZoomedInSize)
+                {
+                    virtualCamera.m_Lens.OrthographicSize -= Time.deltaTime * panSpeed * 5;
+                }
             }
         }
+
+        void LookAtPlayer()
+        {
+            if (!startedLooking)
+                return;
+            virtualCamera.Follow = transform;
+        }
+
+        void LookUp()
+        {
+            if (startedLooking)
+                return;
+            virtualCamera.Follow = null;
+            virtualCamera.transform.DOMoveY(virtualCamera.transform.localPosition.y + 4, 0.5f);
+        }
+
+        void LookDown()
+        {
+            if (startedLooking)
+                return;
+            virtualCamera.Follow = null;
+            virtualCamera.transform.DOMoveY(virtualCamera.transform.localPosition.y - 4, 0.5f);
+        }
+
+
     }
 }
 

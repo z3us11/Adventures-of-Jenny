@@ -14,7 +14,7 @@ TagManager:
   - UI
   - Wall
   - Ledge
-  - 
+  - Velocity
   - 
   - 
   - 
@@ -48,8 +48,17 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: PlayArea
+  - name: GrassBack
+    uniqueID: 1811145025
+    locked: 0
+  - name: Player
+    uniqueID: 157187581
+    locked: 0
+  - name: GrassFront
     uniqueID: 62663945
+    locked: 0
+  - name: Flower
+    uniqueID: 2856223263
     locked: 0
   - name: Foreground
     uniqueID: 2165975741
