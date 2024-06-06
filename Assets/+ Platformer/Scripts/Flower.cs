@@ -7,7 +7,10 @@ using UnityEngine;
 public class Flower : MonoBehaviour
 {
     public FlowerColor flowerColor;
+    public Color color;
+    public ParticleSystem pickupParticle;
 
+    ParticleSystem subParticle;
     bool collectedFlower = false;
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -18,6 +21,11 @@ public class Flower : MonoBehaviour
             {
                 collision.transform.parent.GetComponent<PlayerController>().flowerCollection.OnFlowerCollected(flowerColor);
                 CollectFlower();
+                var particle = Instantiate(pickupParticle, transform.position + Vector3.up, Quaternion.identity);
+
+                particle.startColor = color;
+
+                Destroy(particle.gameObject, 0.5f);
                 collectedFlower = true;
             }
         }

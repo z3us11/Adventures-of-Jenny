@@ -33,8 +33,10 @@ namespace Platformer
         [Header("Jump")]
         [SerializeField] float jumpHeight;
         [SerializeField] float jumpMultiplier;
+        [SerializeField] float maxFallingVelocity;
         float jumpButtonPressedTimer;
         bool isJumpingFromLedgeOrWall = false;
+        bool isPerfectJump;
         [SerializeField] float perfectJumpTime;
         [SerializeField] float perfectJumpTimeWindow;
         [SerializeField] float jumpButtonPressThreshold;
@@ -48,7 +50,7 @@ namespace Platformer
         bool isClimbingFromLedge;
         public bool IsTouchingLedge { get { return isTouchingLedge; } set { isTouchingLedge = value; } }
         Ledge currentLedge;
-        public Ledge CurrentLedge { get { return  currentLedge; } set {  currentLedge = value; } }
+        public Ledge CurrentLedge { get { return currentLedge; } set { currentLedge = value; } }
         [Header("Wall Slide")]
         [SerializeField] Transform wallCheck;
         [SerializeField] LayerMask wallLayer;
@@ -59,16 +61,24 @@ namespace Platformer
         [SerializeField] Transform playerGround;
         [SerializeField] Transform playerWall;
         [SerializeField] GameObject grassParticle;
+        [SerializeField] GameObject grassParticlePerfectJump;
         [Space]
         [SerializeField] GameObject jumpEffectRing;
         [SerializeField] GameObject jumpEffectSprite;
+        [SerializeField] GameObject jumpEffectParticle;
         bool isSpawningWalkParticles = false;
+        bool isJumping = false;
         [Header("Camera")]
         [SerializeField] CinemachineVirtualCamera virtualCamera;
         [SerializeField] int cameraZoomedInSize;
         [SerializeField] int cameraZoomedOutSize;
         [SerializeField] float cameraPanSpeed;
+        Vector3 cameraStartPositionBeforePanning;
         bool isPlayerPanningCamera = false;
+        bool startedLookingX = false;
+        bool startedLookingY = false;
+        bool startedLookingBack = false;
+        bool lookBackComplete = false;
         [Header("UI")]
         public AbilityUnlockPanel abilityUnlockPanel;
         [Space]
@@ -80,12 +90,13 @@ namespace Platformer
         bool isGrounded = false;
         bool isSprintingWhileJumping = false;
 
+        float rightXInput = 0;
         float rightYInput = 0;
-        bool startedLooking = false;
 
         private Rigidbody2D rb;
         private Transform visuals;
         private Animator anim;
+        private Animator perfectJumpAnim;
 
         private void Awake()
         {
@@ -93,6 +104,7 @@ namespace Platformer
 
             visuals = transform.GetChild(0);
             anim = visuals.GetComponent<Animator>();
+            perfectJumpAnim = jumpEffectSprite.GetComponent<Animator>();
         }
 
         void OnMoveX(InputValue inputValue)
@@ -120,6 +132,11 @@ namespace Platformer
             isPlayerPanningCamera = inputValue.Get<float>() != 0 ? true : false;
         }
 
+        void OnMoveRightX(InputValue inputValue)
+        {
+            rightXInput = inputValue.Get<float>();
+        }
+
         void OnMoveRightY(InputValue inputValue)
         {
             rightYInput = inputValue.Get<float>();
@@ -144,8 +161,8 @@ namespace Platformer
             float deltaVelocity = targetVelocity - currentVelocity;
 
             // Clamp the delta velocity to acceleration
-            
-            
+
+
             if (Mathf.Sign(xInput) != Mathf.Sign(rb.velocity.x))
                 deltaVelocity *= 2f;
             deltaVelocity = Mathf.Clamp(deltaVelocity, -acceleration * Time.fixedDeltaTime, acceleration * Time.fixedDeltaTime);
@@ -156,11 +173,15 @@ namespace Platformer
 
             if (Mathf.Abs(rb.velocity.x) < 0.1f)
                 rb.velocity = new Vector2(0, rb.velocity.y);
+
+            if (rb.velocity.y < maxFallingVelocity)
+                rb.velocity = new Vector2(rb.velocity.x, maxFallingVelocity);
+
         }
 
         private void Update()
         {
-            if(!canPlayerMove)
+            if (!canPlayerMove)
                 return;
 
             if (!isLedgeGrabbing)
@@ -182,20 +203,22 @@ namespace Platformer
 
             if (isTouchingLedge)
             {
-                if(IsFacingFront() && !IsGrounded())
+                if (IsFacingFront() && !IsGrounded())
                 {
                     //GrabLedge(currentLedge);
                 }
                 else
                 {
-                    if(yInput < 0)
+                    if (yInput < 0)
                     {
-                        if (currentLedge.transform.localPosition.x < 0)
-                            visuals.transform.localScale = new Vector3(1, 1, 1);
-                        else if(currentLedge.transform.localPosition.x > 0)
-                            visuals.transform.localScale = new Vector3(-1, 1, 1);
-
-                        GrabLedge(currentLedge);
+                        if (currentLedge != null)
+                        {
+                            if (currentLedge.transform.localPosition.x < 0)
+                                visuals.transform.localScale = new Vector3(1, 1, 1);
+                            else if (currentLedge.transform.localPosition.x > 0)
+                                visuals.transform.localScale = new Vector3(-1, 1, 1);
+                            GrabLedge(currentLedge);
+                        }
                     }
                 }
             }
@@ -208,14 +231,26 @@ namespace Platformer
 
             //Jumping
             Jump();
+            jumpEffectParticle.SetActive(jumpEffectSprite.activeSelf);
 
             //Camera
             PanCamera();
 
+            if (rightXInput == 0)
+            {
+                LookAtPlayer();
+            }
+            else if (rightXInput != 0)
+            {
+                if (rightXInput < 0)
+                    LookLeft();
+                else if (rightXInput > 0)
+                    LookRight();
+            }
+
             if (rightYInput == 0)
             {
                 LookAtPlayer();
-                startedLooking = false;
             }
             else
             {
@@ -223,8 +258,15 @@ namespace Platformer
                     LookUp();
                 else if (rightYInput < 0)
                     LookDown();
-                startedLooking = true;
             }
+
+            if (lookBackComplete)
+            {
+                Debug.Log("Looking Back Complete");
+                lookBackComplete = false;
+                startedLookingBack = false;
+            }
+
 
         }
 
@@ -241,7 +283,7 @@ namespace Platformer
                     {
                         velocity = sprintVelocity;
                         acceleration = sprintAcceleration;
-                        
+
                     }
                     else
                     {
@@ -262,7 +304,7 @@ namespace Platformer
                 acceleration = walkAcceleration;
             }
 
-            
+
             if (Mathf.Abs(rb.velocity.x) > walkVelocity)
             {
                 acceleration = sprintAcceleration;
@@ -277,53 +319,58 @@ namespace Platformer
                 if (jumpButtonPressedTimer < jumpButtonPressThreshold)
                 {
                     jumpButtonPressedTimer += Time.deltaTime;
-                    if(jumpButtonPressedTimer <= perfectJumpTime)
+                    if (jumpButtonPressedTimer <= perfectJumpTime)
                     {
                         float scale = jumpEffectRing.transform.localScale.x;
                         scale = Remap(jumpButtonPressedTimer, 0, perfectJumpTime, 2, 0);
                         jumpEffectRing.transform.localScale = new Vector3(scale, scale);
                     }
 
-                    if(jumpButtonPressedTimer > (perfectJumpTime - perfectJumpTimeWindow) && jumpButtonPressedTimer < (perfectJumpTime + perfectJumpTimeWindow))
+                    if (jumpButtonPressedTimer > (perfectJumpTime - perfectJumpTimeWindow) && jumpButtonPressedTimer < (perfectJumpTime + perfectJumpTimeWindow))
                     {
                         jumpEffectSprite.SetActive(true);
-                        jumpEffectSprite.GetComponent<SpriteRenderer>().sprite = visuals.GetComponent<SpriteRenderer>().sprite;
+                        visuals.GetComponent<SpriteRenderer>().enabled = false;
+                        //jumpEffectSprite.GetComponent<SpriteRenderer>().sprite = visuals.GetComponent<SpriteRenderer>().sprite;
                     }
                     else
                     {
                         jumpEffectSprite.SetActive(false);
+                        visuals.GetComponent<SpriteRenderer>().enabled = true;
                     }
 
                 }
                 else
                 {
-                    isJumpPressed = false;
+                    //isJumpPressed = false;
                     jumpButtonPressedTimer = jumpButtonPressThreshold;
                     jumpEffectRing.SetActive(false);
                     jumpEffectSprite.SetActive(false);
+                    visuals.GetComponent<SpriteRenderer>().enabled = true;
                 }
             }
             else
             {
+                isPerfectJump = false;
                 if (jumpButtonPressedTimer > 0.01f)
                 {
                     if (jumpButtonPressedTimer > (perfectJumpTime - perfectJumpTimeWindow) && jumpButtonPressedTimer < (perfectJumpTime + perfectJumpTimeWindow))
                     {
+                        isPerfectJump = true;
                         jumpButtonPressedTimer = perfectJumpTime;
                         jumpMultiplier = 1;
                     }
                     else
                     {
                         jumpMultiplier = (perfectJumpTime - Mathf.Abs(jumpButtonPressedTimer - perfectJumpTime)) / perfectJumpTime;
-                        
+
                     }
 
                     if (jumpButtonPressedTimer > perfectJumpTime && jumpMultiplier < 0.75f)
-                        jumpMultiplier = 0.75f;
+                        jumpMultiplier = 1f;
                     else if (jumpMultiplier < 0.25f)
                         jumpMultiplier = 0.25f;
 
-                    Debug.Log(Mathf.Abs(jumpButtonPressedTimer - perfectJumpTime)+ " | " + jumpMultiplier);
+                    Debug.Log(Mathf.Abs(jumpButtonPressedTimer - perfectJumpTime) + " | " + jumpMultiplier);
 
                     //float jumpAccuracy = Mathf.Abs(jumpButtonPressedTimer - perfectJumpTime);
                     //if (jumpAccuracy > jumpButtonPressThreshold - perfectJumpTime - 0.1f)
@@ -339,9 +386,9 @@ namespace Platformer
                     if (IsGrounded())
                         ApplyJumpForce();
 
-                    if(canWallJump)
+                    if (canWallJump)
                     {
-                        if(!IsGrounded())
+                        if (!IsGrounded())
                         {
                             if (isLedgeGrabbing)
                             {
@@ -357,18 +404,19 @@ namespace Platformer
                 }
                 jumpButtonPressedTimer = 0;
                 jumpEffectRing.SetActive(false);
-                jumpEffectSprite.SetActive(false);
+                //jumpEffectSprite.SetActive(false);
             }
         }
 
         void ApplyJumpForce(bool isNormalJump = true)
         {
+            StartCoroutine(IsJumping());
             if (isSprintPressed)
                 isSprintingWhileJumping = true;
             else
                 isSprintingWhileJumping = false;
 
-            if(isNormalJump)
+            if (isNormalJump)
             {
                 //rb.velocity = new Vector2(rb.velocity.x, Mathf.Sqrt(-2.0f * rb.gravityScale * Physics2D.gravity.y * jumpHeight * jumpMultiplier * (jumpButtonPressedTimer / perfectJumpTime)));
                 rb.velocity = new Vector2(rb.velocity.x, Mathf.Sqrt(-2.0f * rb.gravityScale * Physics2D.gravity.y * jumpHeight * jumpMultiplier));
@@ -378,6 +426,12 @@ namespace Platformer
             {
                 StartCoroutine(JumpFromLedgeOrWall());
             }
+        }
+
+        IEnumerator IsJumping()
+        {
+            yield return new WaitForSeconds(0.1f);
+            isJumping = true;
         }
 
         IEnumerator JumpFromLedgeOrWall()
@@ -394,10 +448,16 @@ namespace Platformer
         {
             if (IsWallSliding())
             {
-                if(!isScaleSet)
+                if (!isScaleSet)
                 {
                     var scaleX = visuals.transform.localScale.x;
                     visuals.transform.localScale = new Vector3(scaleX, 1, 1);
+                }
+                if (isJumping)
+                {
+                    isJumping = false;
+                    jumpEffectSprite.SetActive(false);
+                    visuals.GetComponent<SpriteRenderer>().enabled = true;
                 }
                 rb.velocity = new Vector2(rb.velocity.x, Mathf.Clamp(rb.velocity.y, -wallSlidingVelocity, float.MaxValue));
                 StartCoroutine(WalkParticles(playerWall));
@@ -411,9 +471,9 @@ namespace Platformer
             if (isLedgeGrabbing)
                 return;
 
-            if(IsWallSliding() && xInput != 0)
+            if (IsWallSliding() && xInput != 0)
             {
-                if(Mathf.Sign(xInput) == Mathf.Sign(visuals.transform.localScale.x))
+                if (Mathf.Sign(xInput) == Mathf.Sign(visuals.transform.localScale.x))
                 {
                     rb.velocity = new Vector2(rb.velocity.x, walkVelocity);
                     StartCoroutine(WalkParticles(playerWall));
@@ -421,7 +481,7 @@ namespace Platformer
             }
         }
 
-        
+
         void LedgeGrab()
         {
             if (!canLedgeGrab)
@@ -445,7 +505,7 @@ namespace Platformer
                 return;
             if (isClimbingFromLedge)
                 return;
-            if(isJumpingFromLedgeOrWall)
+            if (isJumpingFromLedgeOrWall)
                 return;
 
             Debug.Log("Grabbing Ledge");
@@ -456,6 +516,12 @@ namespace Platformer
             transform.DOMove(ledge.transform.position - new Vector3(0, 0.10f), 0.2f);
             rb.velocity = Vector2.zero;
             rb.gravityScale = 0;
+            if (isJumping)
+            {
+                isJumping = false;
+                jumpEffectSprite.SetActive(false);
+                visuals.GetComponent<SpriteRenderer>().enabled = true;
+            }
         }
 
         void ReleaseLedge()
@@ -476,7 +542,7 @@ namespace Platformer
 
         IEnumerator ClimbFromLedgeGrab()
         {
-            if(yInput > 0)
+            if (yInput > 0)
             {
                 Debug.Log("Climbing");
                 isClimbingFromLedge = true;
@@ -491,7 +557,9 @@ namespace Platformer
         public bool IsGrounded()
         {
             if (isLedgeGrabbing)
+            {
                 return isGrounded = false;
+            }
             //return Physics2D.Raycast(transform.position, Vector2.down, distanceFromGround);
             //if (rb.velocity.y > 0)
             //    return isGrounded = false;
@@ -500,6 +568,12 @@ namespace Platformer
             {
                 if (Physics2D.OverlapCircle(ground.position, 0.2f, groundLayer))
                 {
+                    if (isJumping)
+                    {
+                        isJumping = false;
+                        jumpEffectSprite.SetActive(false);
+                        visuals.GetComponent<SpriteRenderer>().enabled = true;
+                    }
                     return isGrounded = true;
                 }
             }
@@ -509,8 +583,8 @@ namespace Platformer
 
         private bool IsWalking()
         {
-            isWalking = (Math.Abs(rb.velocity.x) > 0.1f) ? true : false;
-            if(isWalking)
+            isWalking = (Math.Abs(rb.velocity.x) > 1f) ? true : false;
+            if (isWalking)
             {
                 return true;
             }
@@ -525,10 +599,10 @@ namespace Platformer
             isSprinting = Mathf.Abs(rb.velocity.x) > walkVelocity ? true : false;
             //if (afterLedgeGrab)
             //    Debug.Log(Mathf.Abs(rb.velocity.x));
-            if(isSprinting)
+            if (isSprinting)
             {
                 return true;
-            } 
+            }
             else
             {
                 return false;
@@ -551,18 +625,18 @@ namespace Platformer
 
         private bool IsFacingFront()
         {
-            //if (Physics2D.OverlapCircle(wallCheck.position, 0.1f, wallLayer))
-            //{
-            //    return true;
-            //}
-
-            foreach (var ground in groundCheck)
+            if (Physics2D.OverlapCircle(wallCheck.position, 0.1f, wallLayer))
             {
-                if (Physics2D.OverlapCircle(ground.position, 0.1f, wallLayer))
-                {
-                    return true;
-                }
+                return true;
             }
+
+            //foreach (var ground in groundCheck)
+            //{
+            //    if (Physics2D.OverlapCircle(ground.position, 0.1f, wallLayer))
+            //    {
+            //        return true;
+            //    }
+            //}
             return false;
         }
 
@@ -571,16 +645,17 @@ namespace Platformer
         private void ChangeWalkingState()
         {
             anim.SetBool(nameof(isWalking), IsWalking());
+            perfectJumpAnim.SetBool(nameof(isWalking), IsWalking());
             anim.speed = IsSprinting() ? 1.5f : 1.0f;
 
             if (IsWallSliding())
                 return;
 
-            if (rb.velocity.x > 0f)
+            if (rb.velocity.x > 1f)
             {
                 visuals.localScale = new Vector3(1, 1, 1);
             }
-            else if (rb.velocity.x < 0f)
+            else if (rb.velocity.x < -1f)
             {
                 visuals.localScale = new Vector3(-1, 1, 1);
             }
@@ -588,7 +663,7 @@ namespace Platformer
 
         private void ChangeJumpState()
         {
-            if(rb.velocity.y > 0.1f || rb.velocity.y < -0.1f)
+            if (rb.velocity.y > 0.1f || rb.velocity.y < -0.1f)
                 anim.SetFloat("yVelocity", rb.velocity.y);
             else
                 anim.SetFloat("yVelocity", 0);
@@ -596,17 +671,20 @@ namespace Platformer
             if (IsGrounded())
             {
                 anim.SetInteger("velocity", 0);
+                perfectJumpAnim.SetInteger("velocity", 0);
             }
             else
             {
                 if (rb.velocity.y > 0)
                 {
                     anim.SetInteger("velocity", 1);
+                    perfectJumpAnim.SetInteger("velocity", 1);
 
                 }
                 else if (rb.velocity.y < 0)
                 {
                     anim.SetInteger("velocity", -1);
+                    perfectJumpAnim.SetInteger("velocity", -1);
                 }
             }
 
@@ -617,7 +695,7 @@ namespace Platformer
 
         public void UnlockAbility(AbilityType ability)
         {
-            if(ability == AbilityType.LedgeGrab)
+            if (ability == AbilityType.LedgeGrab)
             {
                 canLedgeGrab = true;
             }
@@ -625,11 +703,11 @@ namespace Platformer
             {
                 canWallJump = true;
             }
-            else if(ability == AbilityType.WallRun)
+            else if (ability == AbilityType.WallRun)
             {
                 canWallRun = true;
             }
-            else if(ability == AbilityType.Sprint)
+            else if (ability == AbilityType.Sprint)
             {
                 canSprint = true;
             }
@@ -638,7 +716,11 @@ namespace Platformer
         //Effects
         private void SpawnGrassParticle(Transform location, bool isWalkParticle = false, bool isWallParticle = false)
         {
-            var particle = Instantiate(grassParticle, location.position, grassParticle.transform.rotation);
+            GameObject particle;
+            if (isPerfectJump)
+                particle = Instantiate(grassParticlePerfectJump, location.position, grassParticle.transform.rotation);
+            else
+                particle = Instantiate(grassParticle, location.position, grassParticle.transform.rotation);
             particle.transform.localPosition += new Vector3(0, 0.5f);
             if (isWalkParticle)
             {
@@ -648,7 +730,7 @@ namespace Platformer
                 var emission = particleSystem.emission;
                 emission.SetBursts(new ParticleSystem.Burst[]{
                 new ParticleSystem.Burst(0.0f, 2)});
-                if(isWallParticle)
+                if (isWallParticle)
                 {
                     particle.transform.Rotate(new Vector3(0, -visuals.transform.localScale.x * 90, visuals.transform.localScale.x * 90));
                     particleSystem.startSpeed = 1;
@@ -660,7 +742,7 @@ namespace Platformer
 
         private IEnumerator WalkParticles(Transform spawnPoint)
         {
-            if(spawnPoint == playerGround)
+            if (spawnPoint == playerGround)
             {
                 if (isWalking && IsGrounded() && !isSpawningWalkParticles)
                 {
@@ -690,7 +772,7 @@ namespace Platformer
             if (isPlayerPanningCamera)
                 panSpeed *= 5;
 
-            if(IsSprinting() || isPlayerPanningCamera)
+            if (IsSprinting() || isPlayerPanningCamera)
             {
                 if (virtualCamera.m_Lens.OrthographicSize <= cameraZoomedOutSize)
                 {
@@ -703,31 +785,85 @@ namespace Platformer
                 {
                     virtualCamera.m_Lens.OrthographicSize -= Time.deltaTime * panSpeed * 5;
                 }
+                else
+                {
+                    if (!startedLookingX && !startedLookingY && lookBackComplete)
+                        virtualCamera.Follow = transform;
+                }
             }
         }
 
         void LookAtPlayer()
         {
-            if (!startedLooking)
-                return;
-            virtualCamera.Follow = transform;
+            if (!startedLookingX && !startedLookingY)
+            {
+
+                if (virtualCamera.Follow == transform || virtualCamera.transform.position == cameraStartPositionBeforePanning)
+                {
+                    return;
+                }
+                if (!startedLookingBack)
+                {
+                    Debug.Log("Started Looking Back");
+                    startedLookingBack = true;
+                    lookBackComplete = false;
+                    virtualCamera.transform.DOMove(cameraStartPositionBeforePanning, 1f).OnComplete(() => lookBackComplete = true);
+                }
+                if (lookBackComplete)
+                {
+                    Debug.Log("Looking Back Complete");
+                    virtualCamera.Follow = transform;
+                }
+
+            }
+
         }
+
+        void LookLeft()
+        {
+            if (startedLookingX && Vector2.Distance(virtualCamera.transform.position, transform.position) > 3)
+                return;
+            startedLookingX = true;
+            virtualCamera.Follow = null;
+            lookBackComplete = false;
+            cameraStartPositionBeforePanning = virtualCamera.transform.position;
+            virtualCamera.transform.DOMoveX(virtualCamera.transform.localPosition.x - 4, 1f).OnComplete(() => startedLookingX = false);
+        }
+
+        void LookRight()
+        {
+            if (startedLookingX && Vector2.Distance(virtualCamera.transform.position, transform.position) > 3)
+                return;
+            startedLookingX = true;
+            virtualCamera.Follow = null;
+            lookBackComplete = false;
+            cameraStartPositionBeforePanning = virtualCamera.transform.position;
+            virtualCamera.transform.DOMoveX(virtualCamera.transform.localPosition.x + 4, 1f).OnComplete(() => startedLookingX = false);
+        }
+
 
         void LookUp()
         {
-            if (startedLooking)
+            if (startedLookingY && Vector2.Distance(virtualCamera.transform.position, transform.position) > 3)
                 return;
+            startedLookingY = true;
             virtualCamera.Follow = null;
-            virtualCamera.transform.DOMoveY(virtualCamera.transform.localPosition.y + 4, 0.5f);
+            lookBackComplete = false;
+            cameraStartPositionBeforePanning = virtualCamera.transform.position;
+            virtualCamera.transform.DOMoveY(virtualCamera.transform.localPosition.y + 4, 1f).OnComplete(() => startedLookingY = false);
         }
 
         void LookDown()
         {
-            if (startedLooking)
+            if (startedLookingY && Vector2.Distance(virtualCamera.transform.position, transform.position) > 3)
                 return;
+            startedLookingY = true;
             virtualCamera.Follow = null;
-            virtualCamera.transform.DOMoveY(virtualCamera.transform.localPosition.y - 4, 0.5f);
+            lookBackComplete = false;
+            cameraStartPositionBeforePanning = virtualCamera.transform.position;
+            virtualCamera.transform.DOMoveY(virtualCamera.transform.localPosition.y - 4, 1f).OnComplete(() => startedLookingY = false);
         }
+
 
 
 
