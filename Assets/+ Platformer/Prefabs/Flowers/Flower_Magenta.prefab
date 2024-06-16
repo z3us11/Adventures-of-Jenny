@@ -33,7 +33,7 @@ PrefabInstance:
       objectReference: {fileID: -1131318777, guid: fe5a30314c848ac49a804efde58f7739, type: 3}
     - target: {fileID: 6943762810715770293, guid: ecdce03f4434cf6478cbcc034c2c29bd, type: 3}
       propertyPath: m_SortingLayer
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 6943762810715770293, guid: ecdce03f4434cf6478cbcc034c2c29bd, type: 3}
       propertyPath: m_SortingLayerID
@@ -54,6 +54,10 @@ PrefabInstance:
     - target: {fileID: 8839558154144558018, guid: ecdce03f4434cf6478cbcc034c2c29bd, type: 3}
       propertyPath: m_Name
       value: Flower_Magenta
+      objectReference: {fileID: 0}
+    - target: {fileID: 8839558154144558018, guid: ecdce03f4434cf6478cbcc034c2c29bd, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8839558154144558021, guid: ecdce03f4434cf6478cbcc034c2c29bd, type: 3}
       propertyPath: m_RootOrder
@@ -125,6 +129,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 5614617563509603324, guid: ecdce03f4434cf6478cbcc034c2c29bd, type: 3}
+    - {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: ecdce03f4434cf6478cbcc034c2c29bd, type: 3}
 --- !u!1 &6963119949773061025 stripped
 GameObject:
@@ -142,7 +147,7 @@ Animator:
   m_Enabled: 1
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 46c108b3454278544aa7f1a793b75124, type: 2}
-  m_CullingMode: 0
+  m_CullingMode: 2
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
@@ -152,3 +157,16 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &-2470164779723509661
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6963119949773061025}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d6365f4019628f45a0d508777f30829, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  renderers: {fileID: 0}

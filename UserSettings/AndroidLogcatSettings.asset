@@ -1,9 +1,9 @@
 {
     "m_SelectedDeviceId": "ZF6226ZTLZ",
     "m_SelectedPackage": {
-        "deviceId": "",
-        "name": "",
-        "processId": 0,
+        "deviceId": "ZF6226ZTLZ",
+        "name": "com.PranavGaur.CatPlatformer",
+        "processId": 23705,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -12,6 +12,30 @@
             "deviceId": "192.168.100.57:38291",
             "name": "com.android.settings",
             "processId": 1795,
+            "exited": false
+        },
+        {
+            "deviceId": "ZF6226ZTLZ",
+            "name": "com.motorola.launcher3",
+            "processId": 3009,
+            "exited": true
+        },
+        {
+            "deviceId": "ZF6226ZTLZ",
+            "name": "com.PranavGaur.CatPlatformer",
+            "processId": 23701,
+            "exited": true
+        },
+        {
+            "deviceId": "ZF6226ZTLZ",
+            "name": "com.PranavGaur.CatPlatformer",
+            "processId": 23703,
+            "exited": false
+        },
+        {
+            "deviceId": "ZF6226ZTLZ",
+            "name": "com.PranavGaur.CatPlatformer",
+            "processId": 23705,
             "exited": false
         }
     ],

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5061412919720653481}
   - component: {fileID: 5061412919720653462}
   - component: {fileID: 2036554139235183185}
+  - component: {fileID: 8916394931219745113}
   m_Layer: 6
   m_Name: LeftWall
   m_TagString: Untagged
@@ -72,7 +73,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -2128991555
-  m_SortingLayer: 5
+  m_SortingLayer: 6
   m_SortingOrder: 4
   m_Sprite: {fileID: -941013216, guid: bbbfcf36af6d054499691589f6a02708, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -111,3 +112,16 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.9, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &8916394931219745113
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5061412919720653463}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d6365f4019628f45a0d508777f30829, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  renderers: {fileID: 0}

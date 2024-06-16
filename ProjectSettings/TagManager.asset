@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - regen
+  - FxTemporaire
+  - Camera
   layers:
   - Default
   - TransparentFX
@@ -47,6 +49,9 @@ TagManager:
     locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Tress
+    uniqueID: 1803942809
     locked: 0
   - name: GrassBack
     uniqueID: 1811145025

@@ -37,12 +37,19 @@ namespace Platformer
         float jumpButtonPressedTimer;
         bool isJumpingFromLedgeOrWall = false;
         bool isPerfectJump;
+        [SerializeField] float jumpBuffer;
+        float jumpBufferCounter;
+        [SerializeField] float coyoteTime;
+        float coyoteTimeCounter;
+        
         [SerializeField] float perfectJumpTime;
         [SerializeField] float perfectJumpTimeWindow;
         [SerializeField] float jumpButtonPressThreshold;
         [SerializeField] private Transform[] groundCheck;
         [SerializeField] private LayerMask groundLayer;
         [Header("Ledge Grab")]
+        [SerializeField] Transform upperCheck;
+        [SerializeField] Transform lowerCheck;
         [SerializeField] float ledgeGrabDistance;
         [SerializeField] LayerMask ledgeLayer;
         bool isLedgeGrabbing;
@@ -56,6 +63,7 @@ namespace Platformer
         [SerializeField] LayerMask wallLayer;
         [SerializeField] float wallSlidingVelocity;
         bool isScaleSet = false;
+        bool isWallRunning = false;
         [Space]
         [Header("Effects")]
         [SerializeField] Transform playerGround;
@@ -72,7 +80,7 @@ namespace Platformer
         [SerializeField] CinemachineVirtualCamera virtualCamera;
         [SerializeField] int cameraZoomedInSize;
         [SerializeField] int cameraZoomedOutSize;
-        [SerializeField] float cameraPanSpeed;
+        [SerializeField] float cameraZoomSpeed;
         Vector3 cameraStartPositionBeforePanning;
         bool isPlayerPanningCamera = false;
         bool startedLookingX = false;
@@ -84,6 +92,8 @@ namespace Platformer
         [Space]
         [Header("Other Scripts")]
         public FlowerCollection flowerCollection;
+        public StaminaConfidence staminaConfidence;
+        public MobileControls mobileControls;
 
         bool isWalking = false;
         bool isSprinting = false;
@@ -146,6 +156,8 @@ namespace Platformer
         {
             if (!canPlayerMove)
                 return;
+            if (virtualCamera.Follow == null)
+                return;
 
             MoveWithAcceleration();
         }
@@ -181,6 +193,16 @@ namespace Platformer
 
         private void Update()
         {
+            if(mobileControls.gameObject.activeSelf)
+            {
+                xInput = mobileControls.onScreenXInput;
+                yInput = mobileControls.onScreenYInput;
+                isJumpPressed = mobileControls.onScreenJumpBtnPressed;
+                isSprintPressed = mobileControls.onScreenSprintBtnPressed;
+
+                mobileControls.sprintBtn.gameObject.SetActive(canSprint);
+            }
+
             if (!canPlayerMove)
                 return;
 
@@ -230,45 +252,20 @@ namespace Platformer
             }
 
             //Jumping
+            UpdateJumpBufferCounter();
             Jump();
+            if (rb.velocity.y < 0 && !IsWallSliding())
+                StartCoroutine(IsJumping());
+            UpdateCoyoteTimeCounter();
             jumpEffectParticle.SetActive(jumpEffectSprite.activeSelf);
 
             //Camera
+            ZoomCamera();
+            /*
             PanCamera();
-
-            if (rightXInput == 0)
-            {
-                LookAtPlayer();
-            }
-            else if (rightXInput != 0)
-            {
-                if (rightXInput < 0)
-                    LookLeft();
-                else if (rightXInput > 0)
-                    LookRight();
-            }
-
-            if (rightYInput == 0)
-            {
-                LookAtPlayer();
-            }
-            else
-            {
-                if (rightYInput > 0)
-                    LookUp();
-                else if (rightYInput < 0)
-                    LookDown();
-            }
-
-            if (lookBackComplete)
-            {
-                Debug.Log("Looking Back Complete");
-                lookBackComplete = false;
-                startedLookingBack = false;
-            }
-
-
+            */
         }
+
 
         void MovementValuesIfSprinting()
         {
@@ -311,6 +308,49 @@ namespace Platformer
             }
         }
 
+        public void UpdateCoyoteTimeCounter()
+        {
+            if(IsGrounded())
+            {
+                coyoteTimeCounter = coyoteTime;
+            }
+            else
+            {
+                if(coyoteTimeCounter > 0)
+                    coyoteTimeCounter -= Time.deltaTime;
+                else
+                    coyoteTimeCounter = 0;
+            }
+        }
+
+        public void UpdateJumpBufferCounter()
+        {
+            if(!isJumpPressed && jumpButtonPressedTimer > 0.01f)
+                jumpBufferCounter = jumpBuffer;
+            else
+            {
+                if (jumpBufferCounter > 0)
+                    jumpBufferCounter -= Time.deltaTime;
+                else
+                    jumpBufferCounter = 0;
+            }
+
+        }
+
+        bool CanJump()
+        {
+            //return IsGrounded(); 
+
+            if (coyoteTimeCounter > 0 && jumpBufferCounter > 0)
+            {
+                return true;
+
+            }
+            else
+                return false;
+        }
+
+
         void Jump()
         {
             if (isJumpPressed)
@@ -330,12 +370,22 @@ namespace Platformer
                     {
                         jumpEffectSprite.SetActive(true);
                         visuals.GetComponent<SpriteRenderer>().enabled = false;
+                        Time.timeScale = 0.75f;
+                        if(staminaConfidence.GetStaminConfidenceValue() > 75)
+                        {
+                            jumpButtonPressedTimer = perfectJumpTime;
+                        }
+                            
                         //jumpEffectSprite.GetComponent<SpriteRenderer>().sprite = visuals.GetComponent<SpriteRenderer>().sprite;
                     }
                     else
                     {
-                        jumpEffectSprite.SetActive(false);
-                        visuals.GetComponent<SpriteRenderer>().enabled = true;
+                        if(jumpButtonPressedTimer > (perfectJumpTime + perfectJumpTimeWindow))
+                        {
+                            jumpEffectSprite.SetActive(false);
+                            visuals.GetComponent<SpriteRenderer>().enabled = true;
+                        }
+                        Time.timeScale = 1f;
                     }
 
                 }
@@ -346,6 +396,7 @@ namespace Platformer
                     jumpEffectRing.SetActive(false);
                     jumpEffectSprite.SetActive(false);
                     visuals.GetComponent<SpriteRenderer>().enabled = true;
+                    Time.timeScale = 1f;
                 }
             }
             else
@@ -370,7 +421,6 @@ namespace Platformer
                     else if (jumpMultiplier < 0.25f)
                         jumpMultiplier = 0.25f;
 
-                    Debug.Log(Mathf.Abs(jumpButtonPressedTimer - perfectJumpTime) + " | " + jumpMultiplier);
 
                     //float jumpAccuracy = Mathf.Abs(jumpButtonPressedTimer - perfectJumpTime);
                     //if (jumpAccuracy > jumpButtonPressThreshold - perfectJumpTime - 0.1f)
@@ -383,8 +433,21 @@ namespace Platformer
                     //if (jumpButtonPressedTimer > perfectJumpTime)
                     //    jumpButtonPressedTimer = perfectJumpTime;
 
-                    if (IsGrounded())
+                    if (CanJump())
+                    {
+                        jumpButtonPressedTimer = 0;
+                        coyoteTimeCounter = 0;
+                        jumpBufferCounter = 0;
                         ApplyJumpForce();
+                    }
+                    //else
+                    //{
+                    //    if(!isJumping)
+                    //    {
+                    //        jumpEffectSprite.SetActive(false);
+                    //        visuals.GetComponent<SpriteRenderer>().enabled = true;
+                    //    }
+                    //}
 
                     if (canWallJump)
                     {
@@ -402,10 +465,20 @@ namespace Platformer
                         }
                     }
                 }
-                jumpButtonPressedTimer = 0;
+
+                StartCoroutine(ResetJumpButtonPressedTimer());
+
                 jumpEffectRing.SetActive(false);
+                Time.timeScale = 1f;
+
                 //jumpEffectSprite.SetActive(false);
             }
+        }
+
+        IEnumerator ResetJumpButtonPressedTimer()
+        {
+            yield return new WaitForSeconds(0.1f);
+            jumpButtonPressedTimer = 0;
         }
 
         void ApplyJumpForce(bool isNormalJump = true)
@@ -425,11 +498,14 @@ namespace Platformer
             else
             {
                 StartCoroutine(JumpFromLedgeOrWall());
+                SpawnGrassParticle(playerWall, false, true);
             }
         }
 
         IEnumerator IsJumping()
         {
+            if (isJumping)
+                yield break;
             yield return new WaitForSeconds(0.1f);
             isJumping = true;
         }
@@ -470,14 +546,22 @@ namespace Platformer
                 return;
             if (isLedgeGrabbing)
                 return;
+            if (staminaConfidence.GetStaminConfidenceValue() == 0)
+                return;
 
             if (IsWallSliding() && xInput != 0)
             {
                 if (Mathf.Sign(xInput) == Mathf.Sign(visuals.transform.localScale.x))
                 {
+                    isWallRunning = true;
                     rb.velocity = new Vector2(rb.velocity.x, walkVelocity);
                     StartCoroutine(WalkParticles(playerWall));
+
                 }
+            }
+            else
+            {
+                isWallRunning = false;
             }
         }
 
@@ -513,7 +597,8 @@ namespace Platformer
             isTouchingLedge = false;
             isLedgeGrabbing = true;
             anim.SetBool(nameof(isLedgeGrabbing), true);
-            transform.DOMove(ledge.transform.position - new Vector3(0, 0.10f), 0.2f);
+            transform.DOMove(ledge.transform.position - new Vector3(visuals.transform.localScale.x * 0.1f, 0.10f), 0.1f);
+            //transform.DOMove(ledge.transform.position, 0f);
             rb.velocity = Vector2.zero;
             rb.gravityScale = 0;
             if (isJumping)
@@ -580,18 +665,11 @@ namespace Platformer
             return isGrounded = false;
         }
 
+        
 
         private bool IsWalking()
         {
-            isWalking = (Math.Abs(rb.velocity.x) > 1f) ? true : false;
-            if (isWalking)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return isWalking = (Math.Abs(rb.velocity.x) > 1f) ? true : false;
         }
 
         private bool IsSprinting()
@@ -599,7 +677,7 @@ namespace Platformer
             isSprinting = Mathf.Abs(rb.velocity.x) > walkVelocity ? true : false;
             //if (afterLedgeGrab)
             //    Debug.Log(Mathf.Abs(rb.velocity.x));
-            if (isSprinting)
+            if (isSprinting && staminaConfidence.GetStaminConfidenceValue() != 0)
             {
                 return true;
             }
@@ -718,9 +796,17 @@ namespace Platformer
         {
             GameObject particle;
             if (isPerfectJump)
+            {
                 particle = Instantiate(grassParticlePerfectJump, location.position, grassParticle.transform.rotation);
+                staminaConfidence.UpdateStaminaConfidence(5);
+            }
             else
+            {
                 particle = Instantiate(grassParticle, location.position, grassParticle.transform.rotation);
+                if (jumpMultiplier == 1f && !isWalkParticle)
+                    staminaConfidence.UpdateStaminaConfidence(-1f);
+
+            }
             particle.transform.localPosition += new Vector3(0, 0.5f);
             if (isWalkParticle)
             {
@@ -736,6 +822,16 @@ namespace Platformer
                     particleSystem.startSpeed = 1;
                 }
             }
+            else
+            {
+                if(isWallParticle)
+                {
+                    var particleSystem = particle.GetComponent<ParticleSystem>();
+                    particle.transform.Rotate(new Vector3(0, -visuals.transform.localScale.x * 90, visuals.transform.localScale.x * 90));
+                    particleSystem.startSpeed = 1;
+
+                }
+            }
             //particle.transform.localRotation = new Quaternion(-90, 0, 0, 0);
             Destroy(particle, 1);
         }
@@ -748,6 +844,8 @@ namespace Platformer
                 {
                     isSpawningWalkParticles = true;
                     SpawnGrassParticle(spawnPoint, true);
+                    if(IsSprinting())
+                        staminaConfidence.UpdateStaminaConfidence(-1f);
                     yield return new WaitForSeconds(0.25f);
                     isSpawningWalkParticles = false;
                 }
@@ -758,6 +856,8 @@ namespace Platformer
                 {
                     isSpawningWalkParticles = true;
                     SpawnGrassParticle(spawnPoint, true, true);
+                    if(isWallRunning)
+                        staminaConfidence.UpdateStaminaConfidence(-1f);
                     yield return new WaitForSeconds(0.35f);
                     isSpawningWalkParticles = false;
                 }
@@ -766,9 +866,9 @@ namespace Platformer
         }
 
         //Camera 
-        void PanCamera()
+        void ZoomCamera()
         {
-            float panSpeed = cameraPanSpeed;
+            float panSpeed = cameraZoomSpeed;
             if (isPlayerPanningCamera)
                 panSpeed *= 5;
 
@@ -793,25 +893,56 @@ namespace Platformer
             }
         }
 
+        private void PanCamera()
+        {
+            if (rightXInput == 0 && rightYInput == 0)
+            {
+                LookAtPlayer();
+            }
+
+            if (rb.velocity.magnitude < 0.5f)
+            {
+                if (rightXInput != 0)
+                {
+                    if (rightXInput < 0)
+                        LookLeft();
+                    else if (rightXInput > 0)
+                        LookRight();
+                }
+                if (rightYInput != 0)
+                {
+                    if (rightYInput > 0)
+                        LookUp();
+                    else if (rightYInput < 0)
+                        LookDown();
+                }
+            }
+
+
+            if (lookBackComplete)
+            {
+                lookBackComplete = false;
+                startedLookingBack = false;
+            }
+        }
+
         void LookAtPlayer()
         {
             if (!startedLookingX && !startedLookingY)
             {
 
-                if (virtualCamera.Follow == transform || virtualCamera.transform.position == cameraStartPositionBeforePanning)
+                if (virtualCamera.Follow == transform)
                 {
                     return;
                 }
                 if (!startedLookingBack)
                 {
-                    Debug.Log("Started Looking Back");
                     startedLookingBack = true;
                     lookBackComplete = false;
-                    virtualCamera.transform.DOMove(cameraStartPositionBeforePanning, 1f).OnComplete(() => lookBackComplete = true);
+                    virtualCamera.transform.DOMove(cameraStartPositionBeforePanning, 0.5f).OnComplete(() => lookBackComplete = true);
                 }
                 if (lookBackComplete)
                 {
-                    Debug.Log("Looking Back Complete");
                     virtualCamera.Follow = transform;
                 }
 
@@ -821,47 +952,47 @@ namespace Platformer
 
         void LookLeft()
         {
-            if (startedLookingX && Vector2.Distance(virtualCamera.transform.position, transform.position) > 3)
+            if (startedLookingX || Mathf.Abs(Vector2.Distance(virtualCamera.transform.position, transform.position)) > 4)
                 return;
             startedLookingX = true;
             virtualCamera.Follow = null;
             lookBackComplete = false;
             cameraStartPositionBeforePanning = virtualCamera.transform.position;
-            virtualCamera.transform.DOMoveX(virtualCamera.transform.localPosition.x - 4, 1f).OnComplete(() => startedLookingX = false);
+            virtualCamera.transform.DOMoveX(transform.localPosition.x - 5, 0.5f).OnComplete(() => startedLookingX = false);
         }
 
         void LookRight()
         {
-            if (startedLookingX && Vector2.Distance(virtualCamera.transform.position, transform.position) > 3)
+            if (startedLookingX || Mathf.Abs(Vector2.Distance(virtualCamera.transform.position, transform.position)) > 4)
                 return;
             startedLookingX = true;
             virtualCamera.Follow = null;
             lookBackComplete = false;
             cameraStartPositionBeforePanning = virtualCamera.transform.position;
-            virtualCamera.transform.DOMoveX(virtualCamera.transform.localPosition.x + 4, 1f).OnComplete(() => startedLookingX = false);
+            virtualCamera.transform.DOMoveX(transform.localPosition.x + 5, 0.5f).OnComplete(() => startedLookingX = false);
         }
 
 
         void LookUp()
         {
-            if (startedLookingY && Vector2.Distance(virtualCamera.transform.position, transform.position) > 3)
+            if (startedLookingY || Mathf.Abs(Vector2.Distance(virtualCamera.transform.position, transform.position)) > 4)
                 return;
             startedLookingY = true;
             virtualCamera.Follow = null;
             lookBackComplete = false;
             cameraStartPositionBeforePanning = virtualCamera.transform.position;
-            virtualCamera.transform.DOMoveY(virtualCamera.transform.localPosition.y + 4, 1f).OnComplete(() => startedLookingY = false);
+            virtualCamera.transform.DOMoveY(transform.localPosition.y + 5, 0.5f).OnComplete(() => startedLookingY = false);
         }
 
         void LookDown()
         {
-            if (startedLookingY && Vector2.Distance(virtualCamera.transform.position, transform.position) > 3)
+            if (startedLookingY || Mathf.Abs(Vector2.Distance(virtualCamera.transform.position, transform.position)) > 4)
                 return;
             startedLookingY = true;
             virtualCamera.Follow = null;
             lookBackComplete = false;
             cameraStartPositionBeforePanning = virtualCamera.transform.position;
-            virtualCamera.transform.DOMoveY(virtualCamera.transform.localPosition.y - 4, 1f).OnComplete(() => startedLookingY = false);
+            virtualCamera.transform.DOMoveY(transform.localPosition.y - 5, 0.5f).OnComplete(() => startedLookingY = false);
         }
 
 

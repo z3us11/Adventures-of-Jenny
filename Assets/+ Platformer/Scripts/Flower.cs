@@ -20,6 +20,7 @@ public class Flower : MonoBehaviour
             if(!collectedFlower)
             {
                 collision.transform.parent.GetComponent<PlayerController>().flowerCollection.OnFlowerCollected(flowerColor);
+                collision.transform.parent.GetComponent<PlayerController>().staminaConfidence.UpdateStaminaConfidence(20);
                 CollectFlower();
                 var particle = Instantiate(pickupParticle, transform.position + Vector3.up, Quaternion.identity);
 

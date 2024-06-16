@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 622939287}
   - component: {fileID: 3783606916249576901}
   - component: {fileID: 1816078611642635148}
+  - component: {fileID: -988163859241047732}
   m_Layer: 0
   m_Name: Flower_Yellow
   m_TagString: Untagged
@@ -115,7 +116,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1438744033
-  m_SortingLayer: 4
+  m_SortingLayer: 5
   m_SortingOrder: 0
   m_Sprite: {fileID: -1552572428, guid: 329bf24ea904a7245972d59d0c7d955d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -139,7 +140,7 @@ Animator:
   m_Enabled: 1
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 7037b4e0dc3dc0f44a2df90f0aea375c, type: 2}
-  m_CullingMode: 0
+  m_CullingMode: 2
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
@@ -149,3 +150,16 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &-988163859241047732
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3347100602252247986}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d6365f4019628f45a0d508777f30829, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  renderers: {fileID: 0}
