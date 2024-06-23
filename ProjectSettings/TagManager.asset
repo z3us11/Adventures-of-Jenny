@@ -53,6 +53,9 @@ TagManager:
   - name: Tress
     uniqueID: 1803942809
     locked: 0
+  - name: ForegroundShadow
+    uniqueID: 380424539
+    locked: 0
   - name: GrassBack
     uniqueID: 1811145025
     locked: 0

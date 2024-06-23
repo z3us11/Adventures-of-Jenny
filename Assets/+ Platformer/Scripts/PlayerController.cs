@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 namespace Platformer
 {
@@ -71,9 +72,11 @@ namespace Platformer
         [SerializeField] GameObject grassParticle;
         [SerializeField] GameObject grassParticlePerfectJump;
         [Space]
+        [SerializeField] GameObject playerShadow;
         [SerializeField] GameObject jumpEffectRing;
         [SerializeField] GameObject jumpEffectSprite;
         [SerializeField] GameObject jumpEffectParticle;
+
         bool isSpawningWalkParticles = false;
         bool isJumping = false;
         [Header("Camera")]
@@ -89,11 +92,15 @@ namespace Platformer
         bool lookBackComplete = false;
         [Header("UI")]
         public AbilityUnlockPanel abilityUnlockPanel;
+        public Toggle mobileControlsToggle;
         [Space]
         [Header("Other Scripts")]
         public FlowerCollection flowerCollection;
         public StaminaConfidence staminaConfidence;
         public MobileControls mobileControls;
+        [Space]
+        [SerializeField] Transform visuals;
+        [SerializeField] Animator[] playerAnims;
 
         bool isWalking = false;
         bool isSprinting = false;
@@ -104,17 +111,16 @@ namespace Platformer
         float rightYInput = 0;
 
         private Rigidbody2D rb;
-        private Transform visuals;
-        private Animator anim;
         private Animator perfectJumpAnim;
 
         private void Awake()
         {
             rb = GetComponent<Rigidbody2D>();
+        }
 
-            visuals = transform.GetChild(0);
-            anim = visuals.GetComponent<Animator>();
-            perfectJumpAnim = jumpEffectSprite.GetComponent<Animator>();
+        private void Start()
+        {
+            CheckForMobileControls();
         }
 
         void OnMoveX(InputValue inputValue)
@@ -150,6 +156,26 @@ namespace Platformer
         void OnMoveRightY(InputValue inputValue)
         {
             rightYInput = inputValue.Get<float>();
+        }
+
+        private void CheckForMobileControls()
+        {
+            if (Application.platform == RuntimePlatform.Android)
+            {
+                Application.targetFrameRate = 60;
+
+                mobileControlsToggle.isOn = true;
+                mobileControlsToggle.gameObject.SetActive(false);
+            }
+            else if (Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
+            {
+                mobileControlsToggle.isOn = false;
+                mobileControlsToggle.gameObject.SetActive(false);
+            }
+            else if (Application.platform == RuntimePlatform.WebGLPlayer)
+            {
+                mobileControlsToggle.isOn = false;
+            }
         }
 
         private void FixedUpdate()
@@ -205,6 +231,8 @@ namespace Platformer
 
             if (!canPlayerMove)
                 return;
+
+            playerShadow.transform.localScale = visuals.transform.localScale;
 
             if (!isLedgeGrabbing)
             {
@@ -596,7 +624,8 @@ namespace Platformer
             yInput = 0;
             isTouchingLedge = false;
             isLedgeGrabbing = true;
-            anim.SetBool(nameof(isLedgeGrabbing), true);
+            for(int i = 0; i < playerAnims.Length; i++)
+                playerAnims[i].SetBool(nameof(isLedgeGrabbing), true);
             transform.DOMove(ledge.transform.position - new Vector3(visuals.transform.localScale.x * 0.1f, 0.10f), 0.1f);
             //transform.DOMove(ledge.transform.position, 0f);
             rb.velocity = Vector2.zero;
@@ -614,7 +643,8 @@ namespace Platformer
             Debug.Log("Releasing Ledge");
             rb.gravityScale = 4;
             isLedgeGrabbing = false;
-            anim.SetBool(nameof(isLedgeGrabbing), false);
+            for(int i = 0; i < playerAnims.Length; i++)
+                playerAnims[i].SetBool(nameof(isLedgeGrabbing), false);
             currentLedge = null;
         }
 
@@ -722,9 +752,12 @@ namespace Platformer
         //Animations
         private void ChangeWalkingState()
         {
-            anim.SetBool(nameof(isWalking), IsWalking());
-            perfectJumpAnim.SetBool(nameof(isWalking), IsWalking());
-            anim.speed = IsSprinting() ? 1.5f : 1.0f;
+            for(int i = 0; i < playerAnims.Length; i++)
+                playerAnims[i].SetBool(nameof(isWalking), IsWalking());
+            for(int i = 0; i < playerAnims.Length; i++)
+                playerAnims[i].SetBool(nameof(isWalking), IsWalking());
+            for(int i = 0; i < playerAnims.Length; i++)
+                playerAnims[i].speed = IsSprinting() ? 1.5f : 1.0f;
 
             if (IsWallSliding())
                 return;
@@ -742,32 +775,42 @@ namespace Platformer
         private void ChangeJumpState()
         {
             if (rb.velocity.y > 0.1f || rb.velocity.y < -0.1f)
-                anim.SetFloat("yVelocity", rb.velocity.y);
+                for(int i = 0; i < playerAnims.Length; i++)
+                    playerAnims[i].SetFloat("yVelocity", rb.velocity.y);
             else
-                anim.SetFloat("yVelocity", 0);
+                for(int i = 0; i < playerAnims.Length; i++)
+                    playerAnims[i].SetFloat("yVelocity", 0);
 
             if (IsGrounded())
             {
-                anim.SetInteger("velocity", 0);
-                perfectJumpAnim.SetInteger("velocity", 0);
+                for(int i = 0; i < playerAnims.Length; i++)
+                    playerAnims[i].SetInteger("velocity", 0);
+                for(int i = 0; i < playerAnims.Length; i++)
+                    playerAnims[i].SetInteger("velocity", 0);
             }
             else
             {
                 if (rb.velocity.y > 0)
                 {
-                    anim.SetInteger("velocity", 1);
-                    perfectJumpAnim.SetInteger("velocity", 1);
+                    for(int i = 0; i < playerAnims.Length; i++)
+                        playerAnims[i].SetInteger("velocity", 1);
+                    for(int i = 0; i < playerAnims.Length; i++)
+                        playerAnims[i].SetInteger("velocity", 1);
 
                 }
                 else if (rb.velocity.y < 0)
                 {
-                    anim.SetInteger("velocity", -1);
-                    perfectJumpAnim.SetInteger("velocity", -1);
+                    for(int i = 0; i < playerAnims.Length; i++)
+                        playerAnims[i].SetInteger("velocity", -1);
+                    for(int i = 0; i < playerAnims.Length; i++)
+                        playerAnims[i].SetInteger("velocity", -1);
                 }
             }
 
-            anim.SetBool(nameof(IsGrounded), IsGrounded());
-            anim.SetBool(nameof(IsWallSliding), IsWallSliding());
+            for(int i = 0; i < playerAnims.Length; i++)
+                playerAnims[i].SetBool(nameof(IsGrounded), IsGrounded());
+            for(int i = 0; i < playerAnims.Length; i++)
+                playerAnims[i].SetBool(nameof(IsWallSliding), IsWallSliding());
         }
 
 
@@ -798,13 +841,13 @@ namespace Platformer
             if (isPerfectJump)
             {
                 particle = Instantiate(grassParticlePerfectJump, location.position, grassParticle.transform.rotation);
-                staminaConfidence.UpdateStaminaConfidence(5);
+                staminaConfidence.UpdateStaminaConfidence(15);
             }
             else
             {
                 particle = Instantiate(grassParticle, location.position, grassParticle.transform.rotation);
                 if (jumpMultiplier == 1f && !isWalkParticle)
-                    staminaConfidence.UpdateStaminaConfidence(-1f);
+                    staminaConfidence.UpdateStaminaConfidence(-5f);
 
             }
             particle.transform.localPosition += new Vector3(0, 0.5f);
@@ -845,7 +888,7 @@ namespace Platformer
                     isSpawningWalkParticles = true;
                     SpawnGrassParticle(spawnPoint, true);
                     if(IsSprinting())
-                        staminaConfidence.UpdateStaminaConfidence(-1f);
+                        staminaConfidence.UpdateStaminaConfidence(-5f);
                     yield return new WaitForSeconds(0.25f);
                     isSpawningWalkParticles = false;
                 }
@@ -857,7 +900,7 @@ namespace Platformer
                     isSpawningWalkParticles = true;
                     SpawnGrassParticle(spawnPoint, true, true);
                     if(isWallRunning)
-                        staminaConfidence.UpdateStaminaConfidence(-1f);
+                        staminaConfidence.UpdateStaminaConfidence(-5f);
                     yield return new WaitForSeconds(0.35f);
                     isSpawningWalkParticles = false;
                 }

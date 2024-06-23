@@ -3,7 +3,7 @@
     "m_SelectedPackage": {
         "deviceId": "ZF6226ZTLZ",
         "name": "com.PranavGaur.CatPlatformer",
-        "processId": 23705,
+        "processId": 23708,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -36,6 +36,12 @@
             "deviceId": "ZF6226ZTLZ",
             "name": "com.PranavGaur.CatPlatformer",
             "processId": 23705,
+            "exited": false
+        },
+        {
+            "deviceId": "ZF6226ZTLZ",
+            "name": "com.PranavGaur.CatPlatformer",
+            "processId": 23708,
             "exited": false
         }
     ],

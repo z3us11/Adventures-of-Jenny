@@ -23,6 +23,15 @@ public class MobileControls : MonoBehaviour
         OnJoystickMoved();
     }
 
+    public void OnToggleMobileControls(Toggle mobileControlsToggle)
+    {
+        gameObject.SetActive(mobileControlsToggle.isOn);
+
+        joystick.gameObject.SetActive(mobileControlsToggle.isOn);
+        jumpBtn.gameObject.SetActive(mobileControlsToggle.isOn);
+        sprintBtn.gameObject.SetActive(mobileControlsToggle.isOn);
+    }
+
     private void OnJoystickMoved()
     {
         if (joystick.Horizontal > 0)
