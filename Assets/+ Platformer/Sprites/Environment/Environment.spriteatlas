@@ -82,9 +82,11 @@ SpriteAtlas:
   - {fileID: 1039574536, guid: 296cbbc1f33b1bb4499b5e3eb1ffed93, type: 3}
   - {fileID: 1932682127, guid: 296cbbc1f33b1bb4499b5e3eb1ffed93, type: 3}
   - {fileID: -567705728, guid: 296cbbc1f33b1bb4499b5e3eb1ffed93, type: 3}
+  - {fileID: 21300000, guid: 0b1f4a34d60284445aeefa9ddabb4080, type: 3}
   - {fileID: 361179734, guid: f598b144c86fa514b949b487a1c4cf9c, type: 3}
   - {fileID: -1415932056, guid: f598b144c86fa514b949b487a1c4cf9c, type: 3}
   - {fileID: 264713517, guid: f598b144c86fa514b949b487a1c4cf9c, type: 3}
+  - {fileID: 21300000, guid: c04f7094f39dfba4d9f21e1f4a439f19, type: 3}
   - {fileID: 723118618, guid: 36eaf785b6e5c7f4490f457c83f92c31, type: 3}
   - {fileID: -1279738082, guid: 36eaf785b6e5c7f4490f457c83f92c31, type: 3}
   - {fileID: 1356335890, guid: 36eaf785b6e5c7f4490f457c83f92c31, type: 3}
@@ -113,6 +115,7 @@ SpriteAtlas:
   - {fileID: 1133661429, guid: 0a6ad70ba6f2fda40b434d701df329ce, type: 3}
   - {fileID: -2002494881, guid: 0a6ad70ba6f2fda40b434d701df329ce, type: 3}
   - {fileID: 1970411674, guid: 0a6ad70ba6f2fda40b434d701df329ce, type: 3}
+  - {fileID: 21300000, guid: 8d8c5d0d066a94444b2e5635b94254c4, type: 3}
   - {fileID: 708212090, guid: 74cb629d609fd644cbcf5069fca060e0, type: 3}
   - {fileID: -516990492, guid: 74cb629d609fd644cbcf5069fca060e0, type: 3}
   - {fileID: 1081739058, guid: 74cb629d609fd644cbcf5069fca060e0, type: 3}
@@ -181,9 +184,11 @@ SpriteAtlas:
   - CatSpriteSheet_18
   - CatSpriteSheet_11
   - CatSpriteSheet_10
+  - CatTree
   - Grass_2
   - Grass_0
   - Grass_1
+  - Background
   - Flower Anim Cyan_3
   - Flower Anim Cyan_2
   - Flower Anim Cyan_1
@@ -212,6 +217,7 @@ SpriteAtlas:
   - GrassTile2Inner_1
   - GrassTile2Inner_2
   - GrassTile2Inner_3
+  - Level
   - CatSpriteSheet_13
   - CatSpriteSheet_12
   - CatSpriteSheet_15

@@ -6,21 +6,30 @@ using UnityEngine.UI;
 public class MobileControls : MonoBehaviour
 {
     public Joystick joystick;
+    public Button dpadUp;
+    public Button dpadDown;
+    public Button dpadLeft;
+    public Button dpadRight;
     public Button jumpBtn;
     public Button sprintBtn;
 
-    [HideInInspector]
+    [Header("Public Variables")]
     public float onScreenXInput;
-    [HideInInspector]
     public float onScreenYInput;
-    [HideInInspector]
     public bool onScreenJumpBtnPressed = false;
-    [HideInInspector]
     public bool onScreenSprintBtnPressed = false;
+
+    public enum DPadButton
+    {
+        Up,
+        Down, 
+        Left, 
+        Right
+    }
 
     private void Update()
     {
-        OnJoystickMoved();
+        //OnJoystickMoved();
     }
 
     public void OnToggleMobileControls(Toggle mobileControlsToggle)
@@ -47,6 +56,24 @@ public class MobileControls : MonoBehaviour
             onScreenYInput = -1;
         else
             onScreenYInput = 0;
+    }
+
+    public void OnPressDPadBtn(int dPadButton)
+    {
+        if (dPadButton == (int)DPadButton.Right)
+            onScreenXInput = 1;
+        else if (dPadButton == (int)DPadButton.Left)
+            onScreenXInput = -1;
+        else if (dPadButton == (int)DPadButton.Up)
+            onScreenYInput = 1;
+        else if(dPadButton == (int)DPadButton.Down)
+            onScreenYInput = -1;
+    }
+
+    public void OnReleaseDPadBtn()
+    {
+        onScreenXInput = 0;
+        onScreenYInput = 0;
     }
 
     public void OnPressJumpButton()

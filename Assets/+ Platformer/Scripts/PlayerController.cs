@@ -285,7 +285,7 @@ namespace Platformer
             if (rb.velocity.y < 0 && !IsWallSliding())
                 StartCoroutine(IsJumping());
             UpdateCoyoteTimeCounter();
-            jumpEffectParticle.SetActive(jumpEffectSprite.activeSelf);
+            jumpEffectParticle.SetActive(jumpEffectSprite.GetComponent<SpriteRenderer>().enabled);
 
             //Camera
             ZoomCamera();
@@ -396,7 +396,7 @@ namespace Platformer
 
                     if (jumpButtonPressedTimer > (perfectJumpTime - perfectJumpTimeWindow) && jumpButtonPressedTimer < (perfectJumpTime + perfectJumpTimeWindow))
                     {
-                        jumpEffectSprite.SetActive(true);
+                        jumpEffectSprite.GetComponent<SpriteRenderer>().enabled = true;
                         visuals.GetComponent<SpriteRenderer>().enabled = false;
                         Time.timeScale = 0.75f;
                         if(staminaConfidence.GetStaminConfidenceValue() > 75)
@@ -410,7 +410,7 @@ namespace Platformer
                     {
                         if(jumpButtonPressedTimer > (perfectJumpTime + perfectJumpTimeWindow))
                         {
-                            jumpEffectSprite.SetActive(false);
+                            jumpEffectSprite.GetComponent<SpriteRenderer>().enabled = false;
                             visuals.GetComponent<SpriteRenderer>().enabled = true;
                         }
                         Time.timeScale = 1f;
@@ -422,7 +422,7 @@ namespace Platformer
                     //isJumpPressed = false;
                     jumpButtonPressedTimer = jumpButtonPressThreshold;
                     jumpEffectRing.SetActive(false);
-                    jumpEffectSprite.SetActive(false);
+                    jumpEffectSprite.GetComponent<SpriteRenderer>().enabled = false;
                     visuals.GetComponent<SpriteRenderer>().enabled = true;
                     Time.timeScale = 1f;
                 }
@@ -560,7 +560,7 @@ namespace Platformer
                 if (isJumping)
                 {
                     isJumping = false;
-                    jumpEffectSprite.SetActive(false);
+                    jumpEffectSprite.GetComponent<SpriteRenderer>().enabled = false;
                     visuals.GetComponent<SpriteRenderer>().enabled = true;
                 }
                 rb.velocity = new Vector2(rb.velocity.x, Mathf.Clamp(rb.velocity.y, -wallSlidingVelocity, float.MaxValue));
@@ -633,7 +633,7 @@ namespace Platformer
             if (isJumping)
             {
                 isJumping = false;
-                jumpEffectSprite.SetActive(false);
+                jumpEffectSprite.GetComponent<SpriteRenderer>().enabled = false;
                 visuals.GetComponent<SpriteRenderer>().enabled = true;
             }
         }
@@ -681,12 +681,14 @@ namespace Platformer
 
             foreach (var ground in groundCheck)
             {
-                if (Physics2D.OverlapCircle(ground.position, 0.2f, groundLayer))
+                //if (Physics2D.OverlapCircle(ground.position, 0.2f, groundLayer))
+                var groundHit = Physics2D.Raycast(ground.transform.position, Vector2.down, 0.2f, groundLayer);
+                if (groundHit.collider != null)
                 {
                     if (isJumping)
                     {
                         isJumping = false;
-                        jumpEffectSprite.SetActive(false);
+                        jumpEffectSprite.GetComponent<SpriteRenderer>().enabled = false;
                         visuals.GetComponent<SpriteRenderer>().enabled = true;
                     }
                     return isGrounded = true;
@@ -704,7 +706,7 @@ namespace Platformer
 
         private bool IsSprinting()
         {
-            isSprinting = Mathf.Abs(rb.velocity.x) > walkVelocity ? true : false;
+            isSprinting = Mathf.Abs(rb.velocity.x) > walkVelocity + 1f ? true : false;
             //if (afterLedgeGrab)
             //    Debug.Log(Mathf.Abs(rb.velocity.x));
             if (isSprinting && staminaConfidence.GetStaminConfidenceValue() != 0)
