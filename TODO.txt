@@ -1,0 +1,15 @@
+TODO:
+> Map system
+
+> Water mechanic
+	- Swimming, diving(?)
+	- Water effect on stamina/confidence
+	- water shader
+
+> Inner Levels
+	- Paths between ground that can act as secret areas or paths leading through the ground.
+	- Some might be hidden if not entered 
+
+> Added progression for the gameplay
+	- Collectibles, story elements
+	- New platform types(moving, crumbling)(?)

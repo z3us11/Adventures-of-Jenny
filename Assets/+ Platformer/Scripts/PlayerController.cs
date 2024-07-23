@@ -81,6 +81,7 @@ namespace Platformer
         bool isJumping = false;
         [Header("Camera")]
         [SerializeField] CinemachineVirtualCamera virtualCamera;
+        [SerializeField] CinemachineVirtualCamera mapCamera;
         [SerializeField] int cameraZoomedInSize;
         [SerializeField] int cameraZoomedOutSize;
         [SerializeField] float cameraZoomSpeed;
@@ -90,6 +91,7 @@ namespace Platformer
         bool startedLookingY = false;
         bool startedLookingBack = false;
         bool lookBackComplete = false;
+        bool isMapButtonPressed = false;
         [Header("UI")]
         public AbilityUnlockPanel abilityUnlockPanel;
         public Toggle mobileControlsToggle;
@@ -146,6 +148,33 @@ namespace Platformer
         void OnZoom(InputValue inputValue)
         {
             isPlayerPanningCamera = inputValue.Get<float>() != 0 ? true : false;
+        }
+
+        void OnMap(InputValue inputValue)
+        {
+            isMapButtonPressed = inputValue.Get<float>() != 0 ? true : false;
+            
+            if(isMapButtonPressed)
+                Map(true);
+            //else
+            //{
+            //    virtualCamera.gameObject.SetActive(true);
+            //    mapCamera.gameObject.SetActive(false);
+            //}
+        }
+
+        public void Map(bool open)
+        {
+            if (open)
+            {
+                virtualCamera.gameObject.SetActive(false);
+                mapCamera.gameObject.SetActive(true);
+            }
+            else
+            {
+                virtualCamera.gameObject.SetActive(true);
+                mapCamera.gameObject.SetActive(false);
+            }
         }
 
         void OnMoveRightX(InputValue inputValue)

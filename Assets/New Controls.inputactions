@@ -51,6 +51,15 @@
                     "initialStateCheck": true
                 },
                 {
+                    "name": "map",
+                    "type": "Value",
+                    "id": "dbbf1a32-4092-4a71-8617-d2238654925b",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
                     "name": "moveRightX",
                     "type": "Value",
                     "id": "8b047bee-599d-4854-a658-c2b580ade183",
@@ -399,6 +408,28 @@
                     "action": "moveRightX",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "b0a78a31-470e-4318-aa1a-ebc85c393e13",
+                    "path": "<Gamepad>/select",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "map",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "10e16713-ddf7-49b5-9c0b-b4362b24d282",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "map",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }
