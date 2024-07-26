@@ -6,6 +6,7 @@ public class GrassTile : MonoBehaviour
 {
     [SerializeField] Flower[] flowersPrefab;
     [SerializeField] GameObject[] grasses;
+    [SerializeField] Material grassMat;
 
     private void Start()
     {
@@ -25,6 +26,6 @@ public class GrassTile : MonoBehaviour
             float scale = Random.Range(0.9f, 1.1f);
             grass.transform.localScale = new Vector3(scale, scale);
         }
-        
+
     }
 }

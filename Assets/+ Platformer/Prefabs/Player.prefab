@@ -81,7 +81,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &661227397511331123
 Transform:
   m_ObjectHideFlags: 0
@@ -222,7 +222,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -333,11 +333,11 @@ MonoBehaviour:
   m_LightType: 3
   m_BlendStyleIndex: 1
   m_FalloffIntensity: 0.5
-  m_Color: {r: 1, g: 0.86252844, b: 0, a: 1}
-  m_Intensity: 0.4
+  m_Color: {r: 1, g: 0.91578335, b: 0.72156864, a: 0}
+  m_Intensity: 0.2
   m_LightVolumeIntensity: 1
   m_LightVolumeIntensityEnabled: 0
-  m_ApplyToSortingLayers: c9d8a9c40000000099fb856bbd2a1a81
+  m_ApplyToSortingLayers: c9d8a9c40000000099fb856bbd2a1a815bd1ac16
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0
@@ -384,8 +384,8 @@ MonoBehaviour:
     m_Extent: {x: 0.9985302, y: 0.99853027, z: 0}
   m_PointLightInnerAngle: 360
   m_PointLightOuterAngle: 360
-  m_PointLightInnerRadius: 1
-  m_PointLightOuterRadius: 3
+  m_PointLightInnerRadius: 0.5
+  m_PointLightOuterRadius: 1.5
   m_ShapeLightParametricSides: 5
   m_ShapeLightParametricAngleOffset: 0
   m_ShapeLightParametricRadius: 1
@@ -1068,8 +1068,11 @@ MonoBehaviour:
   playerShadow: {fileID: 2299376367018394081}
   jumpEffectRing: {fileID: 2197040191731499373}
   jumpEffectSprite: {fileID: 1936693829946868822}
+  normalMat: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  jumpEffectMat: {fileID: 2100000, guid: 0bd3ece651c8f1c448a6707c7a881729, type: 2}
   jumpEffectParticle: {fileID: 8598807508684026550}
   virtualCamera: {fileID: 0}
+  mapCamera: {fileID: 0}
   cameraZoomedInSize: 5
   cameraZoomedOutSize: 10
   cameraZoomSpeed: 2
@@ -1083,6 +1086,7 @@ MonoBehaviour:
   - {fileID: 9208914898882252177}
   - {fileID: 4697844279679743492}
   - {fileID: 401321677496620078}
+  playerLight: {fileID: 5882841428306315910}
 --- !u!114 &1875193655
 MonoBehaviour:
   m_ObjectHideFlags: 0

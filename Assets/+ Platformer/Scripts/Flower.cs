@@ -9,6 +9,7 @@ public class Flower : MonoBehaviour
     public FlowerColor flowerColor;
     public Color color;
     public ParticleSystem pickupParticle;
+    public GameObject flowerLight;
 
     ParticleSystem subParticle;
     bool collectedFlower = false;
@@ -29,6 +30,11 @@ public class Flower : MonoBehaviour
                 Destroy(particle.gameObject, 0.5f);
                 collectedFlower = true;
             }
+        }
+
+        if(collision.gameObject.CompareTag("HiddenPath"))
+        {
+            flowerLight.SetActive(true);
         }
     }
 

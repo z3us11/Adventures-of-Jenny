@@ -3,7 +3,8 @@ guid: 2c0d1bfcba7701a40a435200213c7b06
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - grassMat: {fileID: 2100000, guid: e45cdbb8882718f41849d362a4dc80de, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

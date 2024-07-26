@@ -15,7 +15,7 @@ SpriteAtlas:
       compressionQuality: 50
       maxTextureSize: 2048
       textureCompression: 0
-      filterMode: 1
+      filterMode: 0
       generateMipMaps: 0
       readable: 0
       crunchedCompression: 0
@@ -23,10 +23,10 @@ SpriteAtlas:
     platformSettings:
     - serializedVersion: 3
       m_BuildTarget: DefaultTexturePlatform
-      m_MaxTextureSize: 4096
+      m_MaxTextureSize: 8192
       m_ResizeAlgorithm: 0
       m_TextureFormat: -1
-      m_TextureCompression: 1
+      m_TextureCompression: 0
       m_CompressionQuality: 50
       m_CrunchedCompression: 0
       m_AllowsAlphaSplitting: 0
@@ -82,24 +82,17 @@ SpriteAtlas:
   - {fileID: 1039574536, guid: 296cbbc1f33b1bb4499b5e3eb1ffed93, type: 3}
   - {fileID: 1932682127, guid: 296cbbc1f33b1bb4499b5e3eb1ffed93, type: 3}
   - {fileID: -567705728, guid: 296cbbc1f33b1bb4499b5e3eb1ffed93, type: 3}
+  - {fileID: -1358355674, guid: 3a292e4220d2e6a4e990034a3246f16a, type: 3}
+  - {fileID: -925999291, guid: 3a292e4220d2e6a4e990034a3246f16a, type: 3}
+  - {fileID: -1079936328, guid: 3a292e4220d2e6a4e990034a3246f16a, type: 3}
   - {fileID: 21300000, guid: 0b1f4a34d60284445aeefa9ddabb4080, type: 3}
   - {fileID: 361179734, guid: f598b144c86fa514b949b487a1c4cf9c, type: 3}
   - {fileID: -1415932056, guid: f598b144c86fa514b949b487a1c4cf9c, type: 3}
   - {fileID: 264713517, guid: f598b144c86fa514b949b487a1c4cf9c, type: 3}
-  - {fileID: 21300000, guid: c04f7094f39dfba4d9f21e1f4a439f19, type: 3}
   - {fileID: 723118618, guid: 36eaf785b6e5c7f4490f457c83f92c31, type: 3}
   - {fileID: -1279738082, guid: 36eaf785b6e5c7f4490f457c83f92c31, type: 3}
   - {fileID: 1356335890, guid: 36eaf785b6e5c7f4490f457c83f92c31, type: 3}
   - {fileID: -811025475, guid: 36eaf785b6e5c7f4490f457c83f92c31, type: 3}
-  - {fileID: -43592827, guid: bbbfcf36af6d054499691589f6a02708, type: 3}
-  - {fileID: -941013216, guid: bbbfcf36af6d054499691589f6a02708, type: 3}
-  - {fileID: 1647973672, guid: bbbfcf36af6d054499691589f6a02708, type: 3}
-  - {fileID: -676976585, guid: bbbfcf36af6d054499691589f6a02708, type: 3}
-  - {fileID: -1314399944, guid: bbbfcf36af6d054499691589f6a02708, type: 3}
-  - {fileID: -1171228210, guid: bbbfcf36af6d054499691589f6a02708, type: 3}
-  - {fileID: -1044019435, guid: bbbfcf36af6d054499691589f6a02708, type: 3}
-  - {fileID: -738738159, guid: bbbfcf36af6d054499691589f6a02708, type: 3}
-  - {fileID: 59482265, guid: bbbfcf36af6d054499691589f6a02708, type: 3}
   - {fileID: -564508450, guid: eb72efe714b07a64e945746106fb0a48, type: 3}
   - {fileID: -1099765540, guid: eb72efe714b07a64e945746106fb0a48, type: 3}
   - {fileID: 1330300746, guid: eb72efe714b07a64e945746106fb0a48, type: 3}
@@ -109,41 +102,33 @@ SpriteAtlas:
   - {fileID: -1277265913, guid: eb72efe714b07a64e945746106fb0a48, type: 3}
   - {fileID: -685955863, guid: eb72efe714b07a64e945746106fb0a48, type: 3}
   - {fileID: -2055590612, guid: eb72efe714b07a64e945746106fb0a48, type: 3}
-  - {fileID: 21300000, guid: 3bafa4f99f4fadf47a077576997fb1d9, type: 3}
+  - {fileID: 891610140, guid: 584da258b12a04946b288abdf92b1c58, type: 3}
+  - {fileID: 2029717441, guid: 584da258b12a04946b288abdf92b1c58, type: 3}
+  - {fileID: 1675170499, guid: 584da258b12a04946b288abdf92b1c58, type: 3}
+  - {fileID: -434798406, guid: 584da258b12a04946b288abdf92b1c58, type: 3}
+  - {fileID: -646180742, guid: 1920a9c92c7e0e44eb53d8634953fa8a, type: 3}
+  - {fileID: -853165738, guid: 1920a9c92c7e0e44eb53d8634953fa8a, type: 3}
+  - {fileID: -768912597, guid: 1920a9c92c7e0e44eb53d8634953fa8a, type: 3}
+  - {fileID: 1227645325, guid: 1920a9c92c7e0e44eb53d8634953fa8a, type: 3}
+  - {fileID: 1184590382, guid: 1920a9c92c7e0e44eb53d8634953fa8a, type: 3}
+  - {fileID: 1440206926, guid: 1920a9c92c7e0e44eb53d8634953fa8a, type: 3}
+  - {fileID: 803678593, guid: 1920a9c92c7e0e44eb53d8634953fa8a, type: 3}
+  - {fileID: 529113200, guid: 1920a9c92c7e0e44eb53d8634953fa8a, type: 3}
+  - {fileID: -2032877397, guid: 1920a9c92c7e0e44eb53d8634953fa8a, type: 3}
   - {fileID: 21300000, guid: 1bc49a8a3e413394e96d23ec2ac6d1fb, type: 3}
-  - {fileID: 71869817, guid: 0a6ad70ba6f2fda40b434d701df329ce, type: 3}
-  - {fileID: 1133661429, guid: 0a6ad70ba6f2fda40b434d701df329ce, type: 3}
-  - {fileID: -2002494881, guid: 0a6ad70ba6f2fda40b434d701df329ce, type: 3}
-  - {fileID: 1970411674, guid: 0a6ad70ba6f2fda40b434d701df329ce, type: 3}
-  - {fileID: 21300000, guid: 8d8c5d0d066a94444b2e5635b94254c4, type: 3}
-  - {fileID: 708212090, guid: 74cb629d609fd644cbcf5069fca060e0, type: 3}
-  - {fileID: -516990492, guid: 74cb629d609fd644cbcf5069fca060e0, type: 3}
-  - {fileID: 1081739058, guid: 74cb629d609fd644cbcf5069fca060e0, type: 3}
-  - {fileID: -1247064179, guid: 74cb629d609fd644cbcf5069fca060e0, type: 3}
-  - {fileID: 540470524, guid: 74cb629d609fd644cbcf5069fca060e0, type: 3}
-  - {fileID: -222413268, guid: 74cb629d609fd644cbcf5069fca060e0, type: 3}
-  - {fileID: -519141713, guid: 74cb629d609fd644cbcf5069fca060e0, type: 3}
-  - {fileID: -880275252, guid: 74cb629d609fd644cbcf5069fca060e0, type: 3}
-  - {fileID: -857877554, guid: 74cb629d609fd644cbcf5069fca060e0, type: 3}
-  - {fileID: 879722105, guid: 74cb629d609fd644cbcf5069fca060e0, type: 3}
-  - {fileID: 638643424, guid: 74cb629d609fd644cbcf5069fca060e0, type: 3}
-  - {fileID: 120872272, guid: 74cb629d609fd644cbcf5069fca060e0, type: 3}
-  - {fileID: 2076777121, guid: 74cb629d609fd644cbcf5069fca060e0, type: 3}
-  - {fileID: -1354106038, guid: 74cb629d609fd644cbcf5069fca060e0, type: 3}
-  - {fileID: -351868231, guid: 74cb629d609fd644cbcf5069fca060e0, type: 3}
-  - {fileID: 564156277, guid: 74cb629d609fd644cbcf5069fca060e0, type: 3}
-  - {fileID: 96229425, guid: 74cb629d609fd644cbcf5069fca060e0, type: 3}
-  - {fileID: -1864211902, guid: 74cb629d609fd644cbcf5069fca060e0, type: 3}
-  - {fileID: -804358004, guid: 74cb629d609fd644cbcf5069fca060e0, type: 3}
-  - {fileID: -1119576392, guid: 74cb629d609fd644cbcf5069fca060e0, type: 3}
-  - {fileID: 1866095158, guid: 74cb629d609fd644cbcf5069fca060e0, type: 3}
-  - {fileID: 1337090067, guid: 74cb629d609fd644cbcf5069fca060e0, type: 3}
-  - {fileID: -770634054, guid: 74cb629d609fd644cbcf5069fca060e0, type: 3}
-  - {fileID: 167521499, guid: 74cb629d609fd644cbcf5069fca060e0, type: 3}
-  - {fileID: 1379716924, guid: 74cb629d609fd644cbcf5069fca060e0, type: 3}
-  - {fileID: 1039574536, guid: 74cb629d609fd644cbcf5069fca060e0, type: 3}
-  - {fileID: 1932682127, guid: 74cb629d609fd644cbcf5069fca060e0, type: 3}
-  - {fileID: -567705728, guid: 74cb629d609fd644cbcf5069fca060e0, type: 3}
+  - {fileID: 392754730, guid: aff2e31dcf45dd74d8f1c6b8312f087a, type: 3}
+  - {fileID: 747709741, guid: aff2e31dcf45dd74d8f1c6b8312f087a, type: 3}
+  - {fileID: 1867971424, guid: aff2e31dcf45dd74d8f1c6b8312f087a, type: 3}
+  - {fileID: 121868359, guid: aff2e31dcf45dd74d8f1c6b8312f087a, type: 3}
+  - {fileID: 917374207, guid: aff2e31dcf45dd74d8f1c6b8312f087a, type: 3}
+  - {fileID: 360509394, guid: aff2e31dcf45dd74d8f1c6b8312f087a, type: 3}
+  - {fileID: 376971118, guid: aff2e31dcf45dd74d8f1c6b8312f087a, type: 3}
+  - {fileID: -489202177, guid: aff2e31dcf45dd74d8f1c6b8312f087a, type: 3}
+  - {fileID: 1935955817, guid: aff2e31dcf45dd74d8f1c6b8312f087a, type: 3}
+  - {fileID: -1679432406, guid: 6a41fb4d57bc300469584bfe4524c244, type: 3}
+  - {fileID: 406712464, guid: 6a41fb4d57bc300469584bfe4524c244, type: 3}
+  - {fileID: 1526467756, guid: 6a41fb4d57bc300469584bfe4524c244, type: 3}
+  - {fileID: 1853479890, guid: 6a41fb4d57bc300469584bfe4524c244, type: 3}
   - {fileID: 281039447, guid: 7bdc991eaec344a4fbce46a49fc0c9f0, type: 3}
   - {fileID: 888831204, guid: 7bdc991eaec344a4fbce46a49fc0c9f0, type: 3}
   - {fileID: -369889214, guid: 7bdc991eaec344a4fbce46a49fc0c9f0, type: 3}
@@ -151,6 +136,7 @@ SpriteAtlas:
   - {fileID: 1250275725, guid: 329bf24ea904a7245972d59d0c7d955d, type: 3}
   - {fileID: -1552572428, guid: 329bf24ea904a7245972d59d0c7d955d, type: 3}
   - {fileID: -1436286761, guid: 329bf24ea904a7245972d59d0c7d955d, type: 3}
+  - {fileID: 21300000, guid: 66a262de8f2e1ff41a07725b04e4613c, type: 3}
   m_PackedSpriteNamesToIndex:
   - Flower Anim Pink_2
   - Flower Anim Pink_3
@@ -184,24 +170,17 @@ SpriteAtlas:
   - CatSpriteSheet_18
   - CatSpriteSheet_11
   - CatSpriteSheet_10
+  - Water_1
+  - Water_0
+  - Water_2
   - CatTree
   - Grass_2
   - Grass_0
   - Grass_1
-  - Background
   - Flower Anim Cyan_3
   - Flower Anim Cyan_2
   - Flower Anim Cyan_1
   - Flower Anim Cyan_0
-  - GrassTile2_2
-  - GrassTile2_3
-  - GrassTile2_0
-  - GrassTile2_1
-  - GrassTile2_6
-  - GrassTile2_7
-  - GrassTile2_4
-  - GrassTile2_5
-  - GrassTile2_8
   - GrassTileShadow_8
   - GrassTileShadow_6
   - GrassTileShadow_7
@@ -211,41 +190,33 @@ SpriteAtlas:
   - GrassTileShadow_3
   - GrassTileShadow_0
   - GrassTileShadow_1
-  - PowerUpPoint
+  - GrassTileInnerUnderground_1
+  - GrassTileInnerUnderground_0
+  - GrassTileInnerUnderground_3
+  - GrassTileInnerUnderground_2
+  - GrassTile3_8
+  - GrassTile3_3
+  - GrassTile3_2
+  - GrassTile3_1
+  - GrassTile3_0
+  - GrassTile3_7
+  - GrassTile3_6
+  - GrassTile3_5
+  - GrassTile3_4
   - Collar
-  - GrassTile2Inner_0
-  - GrassTile2Inner_1
-  - GrassTile2Inner_2
-  - GrassTile2Inner_3
-  - Level
-  - CatSpriteSheet_13
-  - CatSpriteSheet_12
-  - CatSpriteSheet_15
-  - CatSpriteSheet_14
-  - CatSpriteSheet_17
-  - CatSpriteSheet_20
-  - CatSpriteSheet_21
-  - CatSpriteSheet_22
-  - CatSpriteSheet_23
-  - CatSpriteSheet_24
-  - CatSpriteSheet_32
-  - CatSpriteSheet_25
-  - CatSpriteSheet_31
-  - CatSpriteSheet_26
-  - CatSpriteSheet_30
-  - CatSpriteSheet_29
-  - CatSpriteSheet_2
-  - CatSpriteSheet_3
-  - CatSpriteSheet_0
-  - CatSpriteSheet_1
-  - CatSpriteSheet_7
-  - CatSpriteSheet_4
-  - CatSpriteSheet_5
-  - CatSpriteSheet_8
-  - CatSpriteSheet_19
-  - CatSpriteSheet_18
-  - CatSpriteSheet_11
-  - CatSpriteSheet_10
+  - GrassTileUnderground_7
+  - GrassTileUnderground_6
+  - GrassTileUnderground_5
+  - GrassTileUnderground_4
+  - GrassTileUnderground_3
+  - GrassTileUnderground_2
+  - GrassTileUnderground_1
+  - GrassTileUnderground_0
+  - GrassTileUnderground_8
+  - GrassTile3Inner_3
+  - GrassTile3Inner_2
+  - GrassTile3Inner_1
+  - GrassTile3Inner_0
   - Tress_1
   - Tress_0
   - Tress_2
@@ -253,6 +224,7 @@ SpriteAtlas:
   - Flower Anim Yellow_3
   - Flower Anim Yellow_0
   - Flower Anim Yellow_1
+  - BG
   m_RenderDataMap: {}
   m_Tag: Environment
   m_IsVariant: 0

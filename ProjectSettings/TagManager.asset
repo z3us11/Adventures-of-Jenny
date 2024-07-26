@@ -7,6 +7,7 @@ TagManager:
   - regen
   - FxTemporaire
   - Camera
+  - HiddenPath
   layers:
   - Default
   - TransparentFX
@@ -70,4 +71,7 @@ TagManager:
     locked: 0
   - name: Foreground
     uniqueID: 2165975741
+    locked: 0
+  - name: HiddenPath
+    uniqueID: 209914747
     locked: 0

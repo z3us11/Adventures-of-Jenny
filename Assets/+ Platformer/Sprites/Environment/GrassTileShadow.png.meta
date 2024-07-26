@@ -33,7 +33,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -47,7 +47,7 @@ TextureImporter:
   spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 256
+  spritePixelsToUnits: 64
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -70,7 +70,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -132,10 +132,10 @@ TextureImporter:
       name: GrassTileShadow_0
       rect:
         serializedVersion: 2
-        x: 1
-        y: 512
-        width: 256
-        height: 256
+        x: 0
+        y: 128
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -153,10 +153,10 @@ TextureImporter:
       name: GrassTileShadow_1
       rect:
         serializedVersion: 2
-        x: 256
-        y: 512
-        width: 256
-        height: 256
+        x: 64
+        y: 128
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -164,7 +164,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 086a169ee690bf244b1939de61776029
+      spriteID: 1a06e7d19ddcc57448a38a0d01fdb2d7
       internalID: -2055590612
       vertices: []
       indices: 
@@ -174,10 +174,10 @@ TextureImporter:
       name: GrassTileShadow_2
       rect:
         serializedVersion: 2
-        x: 512
-        y: 512
-        width: 256
-        height: 256
+        x: 128
+        y: 128
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -185,7 +185,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c2fd7200cf0242a419b39da0941dc6e1
+      spriteID: dd3c0bfd023df814d8ddfdb13ec969d3
       internalID: 1456591316
       vertices: []
       indices: 
@@ -196,9 +196,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 256
-        width: 256
-        height: 256
+        y: 64
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -206,7 +206,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8e1d2900ba9a2c1478143c0b70f3c832
+      spriteID: 6a1c544037ff45744b2d58285697dc0c
       internalID: -1277265913
       vertices: []
       indices: 
@@ -216,10 +216,10 @@ TextureImporter:
       name: GrassTileShadow_4
       rect:
         serializedVersion: 2
-        x: 256
-        y: 256
-        width: 256
-        height: 256
+        x: 64
+        y: 64
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -227,7 +227,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: dee6435a7adbff14da434dfd28e5281b
+      spriteID: 521c9dfbf7e35e04bbc55301ce272863
       internalID: 1791814333
       vertices: []
       indices: 
@@ -237,10 +237,10 @@ TextureImporter:
       name: GrassTileShadow_5
       rect:
         serializedVersion: 2
-        x: 512
-        y: 256
-        width: 256
-        height: 256
+        x: 128
+        y: 64
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -248,7 +248,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 249b15fcaf51e8049991e0c121791b80
+      spriteID: 4631d24f9701fde40a799af89fffd80c
       internalID: 2136968951
       vertices: []
       indices: 
@@ -260,8 +260,8 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 256
-        height: 256
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -269,7 +269,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b4f1ae422d5a32542aba38e434945fc3
+      spriteID: 26f8b11b9986f084a89cd3222d681956
       internalID: -1099765540
       vertices: []
       indices: 
@@ -279,10 +279,10 @@ TextureImporter:
       name: GrassTileShadow_7
       rect:
         serializedVersion: 2
-        x: 256
+        x: 64
         y: 0
-        width: 256
-        height: 256
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -290,7 +290,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 76df45194f0003d40a27605dd01dea76
+      spriteID: 1445bb24318d3ea409e73f2f693f407b
       internalID: 1330300746
       vertices: []
       indices: 
@@ -300,10 +300,10 @@ TextureImporter:
       name: GrassTileShadow_8
       rect:
         serializedVersion: 2
-        x: 512
+        x: 128
         y: 0
-        width: 256
-        height: 256
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -311,7 +311,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0bed3449e84ad0e449d54d6149fc4f93
+      spriteID: d33d68fc193cee647b484d1a70005613
       internalID: -564508450
       vertices: []
       indices: 
