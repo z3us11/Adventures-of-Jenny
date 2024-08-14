@@ -29,13 +29,13 @@ public class PlatformGenerator : MonoBehaviour
     [Header("Platform's position and transform related variables")]
     [SerializeField] Vector2 platformStartPosition;
     [SerializeField] float distanceBetweenPlatforms;
-    [SerializeField] float platformStartSize;
-    [SerializeField] float platformEndSize;
+    [SerializeField] int platformStartSize;
+    [SerializeField] int platformEndSize;
     [SerializeField] float platformPosX;
 
     float minDistanceBetweenPlatforms;
-    float minPlatformSize;
-    float maxPlatformSize;
+    int minPlatformSize;
+    int maxPlatformSize;
     float chanceOfCrumblingPlatform = 0.2f;
     float chanceOfMovingPlatform = 0.5f;
 
@@ -53,8 +53,8 @@ public class PlatformGenerator : MonoBehaviour
     private void Start()
     {
         minDistanceBetweenPlatforms = distanceBetweenPlatforms;
-        minPlatformSize = platformEndSize - 1.5f;
-        maxPlatformSize = platformEndSize;
+        minPlatformSize = 4;
+        maxPlatformSize = 5;
 
         for (int i = 0; i < platformTypePrefabs.Length; i++)
         {
@@ -82,7 +82,7 @@ public class PlatformGenerator : MonoBehaviour
         var platform = platformObj.transform;
         platform.gameObject.SetActive(true);
 
-        SetPlatformSize(platform);
+        SetPlatformSize(platformObj);
         SetPlatformPosition(platform);
         SetPlatformProperties(type, platform);
 
@@ -138,20 +138,29 @@ public class PlatformGenerator : MonoBehaviour
         {
             distance = UnityEngine.Random.Range(0.15f, distanceBetweenPlatforms);
         }
-        platform.localPosition = new Vector2(xPos, platformStartPosition.y + distance);
-        platformStartPosition = platform.position;
-    }
 
-    private void SetPlatformSize(Transform platform)
-    {
         if (checkpointPlatform != -1 && (nextPlatformIndex % checkpointPlatform) - (checkpointPlatform - 1) == 0)
         {
-            platform.localScale = new Vector2(checkpointPlatformSize, platform.localScale.y);
+            platform.localPosition = new Vector2(0, platformStartPosition.y + distance);
         }
         else
         {
-            var scale = UnityEngine.Random.Range(minPlatformSize, maxPlatformSize);
-            platform.localScale = new Vector2(scale, 5);
+            platform.localPosition = new Vector2(xPos, platformStartPosition.y + distance);
+            platformStartPosition = platform.position;
+        }
+            
+    }
+
+    private void SetPlatformSize(Platform platform)
+    {
+        int platformSize = UnityEngine.Random.Range(minPlatformSize, maxPlatformSize + 1);
+        if (checkpointPlatform != -1 && (nextPlatformIndex % checkpointPlatform) - (checkpointPlatform - 1) == 0)
+        {
+            platform.SetPlatformSize(7);
+        }
+        else
+        {
+            platform.SetPlatformSize(platformSize);
         }
     }
 
@@ -177,8 +186,9 @@ public class PlatformGenerator : MonoBehaviour
     {
         if(nextPlatformIndex % 50 == 0)
         {
-            minPlatformSize = (minPlatformSize < platformStartSize) ? platformStartSize : minPlatformSize - 0.5f;
-            maxPlatformSize = (maxPlatformSize < platformStartSize) ? platformStartSize : maxPlatformSize - 0.25f;
+            minPlatformSize = (minPlatformSize < platformStartSize) ? platformStartSize : minPlatformSize - 1;
+            if(nextPlatformIndex % 100 == 0)
+                maxPlatformSize = (maxPlatformSize < platformStartSize) ? platformStartSize : maxPlatformSize - 1;
             platformPosX = (platformPosX >= 4) ? 4 : platformPosX + 0.25f;
             distanceBetweenPlatforms = (distanceBetweenPlatforms >= 5) ? 5 : distanceBetweenPlatforms + 0.25f;
             chanceOfCrumblingPlatform = (chanceOfCrumblingPlatform >= 0.65f) ? 0.65f : chanceOfCrumblingPlatform + 0.05f;

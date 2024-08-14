@@ -32,18 +32,18 @@ public class CameraMove : MonoBehaviour
             isMoving = true;
         }
 
-        if (player.position.x <= -playerPosBeforeHorizontalMove)
-        {
-            Debug.Break();
-            canMoveLeft = true;
-        }
-        else
-        {
-            if(player.position.x > -16.65f)
-            {
-                canMoveLeft = false;
-            }
-        }
+        //if (player.position.x <= -playerPosBeforeHorizontalMove)
+        //{
+        //    //Debug.Break();
+        //    canMoveLeft = true;
+        //}
+        //else
+        //{
+        //    if(player.position.x > -16.65f)
+        //    {
+        //        canMoveLeft = false;
+        //    }
+        //}
 
 
         if(canMoveUp)

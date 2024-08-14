@@ -7,13 +7,13 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float perfectJumpTime = 0.1f;
     [SerializeField] private float jumpBufferTime;
     [SerializeField] private float jumpHeight;
-    [SerializeField] private float doubleTapWindow;
     [SerializeField] private Transform[] groundCheck;
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private LayerMask wallLayer;
     [SerializeField] private float horizontalSpeed = 8f;
     [SerializeField] private float wallSlidingSpeed = 5f;
     [SerializeField] private GameObject jumpParticleEffect;
+    [SerializeField] private GameObject jumpParticleEffectPerfect;
 
     //Wall Sliding and Jumping
     [Header("Wall Jump")]
@@ -24,6 +24,10 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float wallJumpingDuration = 0.4f;
     [SerializeField] private Vector2 wallJumpingPower = new Vector2(8f, 16f);
 
+    [Space]
+    [SerializeField] Transform visuals;
+    [SerializeField] Animator[] playerAnims;
+
     private float horizontal;
     private bool isFacingRight = true;
 
@@ -33,6 +37,7 @@ public class PlayerMovement : MonoBehaviour
     private float coyoteTimeCounter;
 
     Rigidbody2D rb;
+    public Rigidbody2D Rb { get { return rb; } }
     SpriteRenderer playerColor;
 
     //Jump related Counters
@@ -41,16 +46,10 @@ public class PlayerMovement : MonoBehaviour
     float timeOnGround = 0;
     float jumpMultiplier = 1f;
 
-    float doubleTapTimer;
-    bool startDoubleTapTimer;
-    bool isDoubleTap;
-
     bool perfectJump = false;
     bool steppedOnObstacle = false;
     bool receivingDamage = false;
 
-    public Rigidbody2D Rb { get { return rb; } }
-    public bool PerfectJump { get { return perfectJump; } }
     //float distanceFromGround;
 
     private void Awake()
@@ -66,9 +65,7 @@ public class PlayerMovement : MonoBehaviour
 
         HorizontalMovement();
         StartGroundedTimer();
-        Debug.Log(DoubleTap());
-        //if(DoubleTap())
-        //    StartJumpBufferCounter();
+        StartJumpBufferCounter();
         VariableJumping();
         //WallSliding();
         //WallJump();
@@ -89,6 +86,15 @@ public class PlayerMovement : MonoBehaviour
         //    coyoteTimeCounter = 0f;
         //}
 
+        if (rb.velocity.x > 1f)
+        {
+            visuals.localScale = new Vector3(1, 1, 1);
+        }
+        else if (rb.velocity.x < -1f)
+        {
+            visuals.localScale = new Vector3(-1, 1, 1);
+        }
+
         if (!IsWallSliding())
             Flip();
     }
@@ -98,9 +104,11 @@ public class PlayerMovement : MonoBehaviour
         horizontal = joystick.Horizontal;
         Vector2 newPos = new Vector2(horizontal * horizontalSpeed * Time.deltaTime, 0);
         transform.Translate(newPos);
+        rb.AddForce(newPos);
         //rb.velocity = new Vector2(horizontal * horizontalSpeed * Time.deltaTime, rb.velocity.y);
     }
 
+    [System.Obsolete]
     private void VariableJumping()
     {
         if (IsGrounded() && jumpBufferCounter > 0 && rb.velocity.y == 0)
@@ -172,17 +180,18 @@ public class PlayerMovement : MonoBehaviour
 
             //Jumps to a specific jump height
             rb.velocity = new Vector2(0, Mathf.Sqrt(-2.0f * rb.gravityScale * Physics2D.gravity.y * jumpHeight * jumpMultiplier));
-
-            var particle = Instantiate(jumpParticleEffect, transform.GetChild(3).position, Quaternion.identity);
+            GameObject particle = null;
             if (jumpMultiplier == 2)
             {
-                particle.GetComponent<ParticleSystem>().startColor = Color.yellow;
-                particle.GetComponent<ParticleSystem>().startSize = 0.6f;
+                particle = Instantiate(jumpParticleEffect, transform.GetChild(3).position, Quaternion.identity);
+                //particle.GetComponent<ParticleSystem>().startColor = Color.yellow;
+                //particle.GetComponent<ParticleSystem>().startSize = 0.6f;
             }
             else if (jumpMultiplier > 2)
             {
-                particle.GetComponent<ParticleSystem>().startColor = Color.red;
-                particle.GetComponent<ParticleSystem>().startSize = 0.2f * jumpMultiplier;
+                particle = Instantiate(jumpParticleEffectPerfect, transform.GetChild(3).position, Quaternion.identity);
+                //particle.GetComponent<ParticleSystem>().startColor = Color.red;
+                //particle.GetComponent<ParticleSystem>().startSize = 0.2f * jumpMultiplier;
             }
 
             Destroy(particle, 1f);
@@ -192,54 +201,6 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    bool DoubleTap()
-    {
-        if (joystick.JoystickTapped)
-        {
-            startDoubleTapTimer = false;
-            if (doubleTapTimer != 0)
-            {
-                if (doubleTapTimer < doubleTapWindow)
-                {
-                    Debug.Log("1");
-                    isDoubleTap = true;
-                }
-                doubleTapTimer = 0;
-
-            }
-            else
-            {
-                Debug.Log("2");
-                isDoubleTap = false;
-            }
-        }
-        if (joystick.JoystickReleased)
-        {
-            startDoubleTapTimer = true;
-            joystick.JoystickTapped = false;
-            joystick.JoystickReleased = false;
-
-        }
-        else
-        {
-            startDoubleTapTimer = false;
-        }
-        if (startDoubleTapTimer)
-        {
-            if (doubleTapTimer < doubleTapWindow)
-            {
-                doubleTapTimer += Time.deltaTime;
-            }
-            else
-            {
-                doubleTapTimer = doubleTapWindow;
-                Debug.Log("3");
-                isDoubleTap = false;
-            }
-        }
-        return isDoubleTap;
-    }
-
     private void StartJumpBufferCounter()
     {
         if (joystick.JoystickReleased)
@@ -247,21 +208,12 @@ public class PlayerMovement : MonoBehaviour
             jumpBufferCounter = jumpBufferTime;
             jumpTime = 0;
             joystick.JoystickReleased = false;
-
-
         }
         else
         {
             if (jumpBufferCounter >= 0)
                 jumpBufferCounter -= Time.deltaTime;
-            else if (jumpBufferCounter >= -3)
-                jumpBufferCounter -= Time.deltaTime;
-            else
-                joystick.JoystickReleased = true;
-
             jumpTime += Time.deltaTime;
-
-
         }
     }
 
