@@ -29,7 +29,7 @@ public class MobileControls : MonoBehaviour
 
     private void Update()
     {
-        //OnJoystickMoved();
+        //OnJoystickMoved(); 
     }
 
     public void OnToggleMobileControls(Toggle mobileControlsToggle)

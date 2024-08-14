@@ -20,12 +20,16 @@ public class GrassTile : MonoBehaviour
             flower.transform.localScale = new Vector2(scale, 1) * Random.Range(0.75f, 1.15f);
         }
 
-        foreach(var grass in grasses)
+        if(grasses != null && grasses.Length > 0)
         {
-            grass.transform.localPosition = new Vector3(grass.transform.localPosition.x, Random.Range(grass.transform.localPosition.y - 0.2f, grass.transform.localPosition.y + 0.1f));
-            float scale = Random.Range(0.9f, 1.1f);
-            grass.transform.localScale = new Vector3(scale, scale);
+            foreach (var grass in grasses)
+            {
+                if (grass == null)
+                    return;
+                grass.transform.localPosition = new Vector3(grass.transform.localPosition.x, Random.Range(grass.transform.localPosition.y - 0.2f, grass.transform.localPosition.y + 0.1f));
+                float scale = Random.Range(0.9f, 1.1f);
+                grass.transform.localScale = new Vector3(scale, scale);
+            }
         }
-
     }
 }

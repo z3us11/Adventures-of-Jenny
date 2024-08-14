@@ -36,6 +36,7 @@ namespace Platformer
         [SerializeField] float jumpHeight;
         [SerializeField] float jumpMultiplier;
         [SerializeField] float maxFallingVelocity;
+        float lastFallingVelocity;
         float jumpButtonPressedTimer;
         bool isJumpingFromLedgeOrWall = false;
         bool isPerfectJump;
@@ -107,6 +108,10 @@ namespace Platformer
         [SerializeField] Transform visuals;
         [SerializeField] Animator[] playerAnims;
         public Light2D playerLight;
+        [Header("Lives")]
+        public GameObject[] lives;
+        bool canLoseLife = true;
+        int totalLives;
 
         bool isWalking = false;
         bool isSprinting = false;
@@ -122,6 +127,7 @@ namespace Platformer
         private void Awake()
         {
             rb = GetComponent<Rigidbody2D>();
+            totalLives = lives.Length;
         }
 
         private void Start()
@@ -332,8 +338,12 @@ namespace Platformer
         {
             if (isSprintPressed)
             {
-                if (!canSprint)
+                if (!canSprint || staminaConfidence.GetStaminConfidenceValue() == 0)
+                {
+                    velocity = walkVelocity;
+                    acceleration = walkAcceleration;
                     return;
+                }
 
                 if (!IsGrounded())
                 {
@@ -363,7 +373,7 @@ namespace Platformer
             }
 
 
-            if (Mathf.Abs(rb.velocity.x) > walkVelocity)
+            if (!IsGrounded() && Mathf.Abs(rb.velocity.x) > walkVelocity)
             {
                 acceleration = sprintAcceleration;
             }
@@ -599,13 +609,32 @@ namespace Platformer
                     var scaleX = visuals.transform.localScale.x;
                     visuals.transform.localScale = new Vector3(scaleX, 1, 1);
                 }
-                if (isJumping)
-                {
-                    isJumping = false;
-                    EnableJumpEffect(false);
-                }
+                StartCoroutine(LandAfterJump());
                 rb.velocity = new Vector2(rb.velocity.x, Mathf.Clamp(rb.velocity.y, -wallSlidingVelocity, float.MaxValue));
                 StartCoroutine(WalkParticles(playerWall));
+            }
+        }
+
+        private IEnumerator LandAfterJump()
+        {
+            if (isJumping)
+            {
+                isJumping = false;
+                EnableJumpEffect(false);
+                if (rb.velocity.y < 0)
+                    lastFallingVelocity = rb.velocity.y;
+                Debug.Log(lastFallingVelocity);
+                if (lastFallingVelocity <= maxFallingVelocity)
+                {
+                    if (canLoseLife && totalLives > 0)
+                    {
+                        canLoseLife = false;
+                        totalLives--;
+                        lives[totalLives].gameObject.SetActive(false);
+                        yield return new WaitForSeconds(1f);
+                        canLoseLife = true;
+                    }
+                }
             }
         }
 
@@ -671,11 +700,7 @@ namespace Platformer
             //transform.DOMove(ledge.transform.position, 0f);
             rb.velocity = Vector2.zero;
             rb.gravityScale = 0;
-            if (isJumping)
-            {
-                isJumping = false;
-                EnableJumpEffect(false);
-            }
+            StartCoroutine(LandAfterJump());
         }
 
         void ReleaseLedge()
@@ -726,11 +751,7 @@ namespace Platformer
                 //{
                 if (Physics2D.OverlapCircle(ground.position, 0.2f, groundLayer))
                 {
-                    if (isJumping)
-                    {
-                        isJumping = false;
-                        EnableJumpEffect(false);
-                    }
+                    StartCoroutine(LandAfterJump());
                     return isGrounded = true;
                 }
             }
