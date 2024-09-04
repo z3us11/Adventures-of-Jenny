@@ -96,6 +96,7 @@ SpriteAtlas:
   - {fileID: -17516967, guid: 6c4f5f42a1060cc4883d744c82f4cd50, type: 3}
   - {fileID: 2114103471, guid: 6c4f5f42a1060cc4883d744c82f4cd50, type: 3}
   - {fileID: 2128915294, guid: 6c4f5f42a1060cc4883d744c82f4cd50, type: 3}
+  - {fileID: 21300000, guid: 93d0a39282d5bed418b05d3ba699bea1, type: 3}
   - {fileID: 21300000, guid: 0b1f4a34d60284445aeefa9ddabb4080, type: 3}
   - {fileID: 361179734, guid: f598b144c86fa514b949b487a1c4cf9c, type: 3}
   - {fileID: -1415932056, guid: f598b144c86fa514b949b487a1c4cf9c, type: 3}
@@ -123,6 +124,8 @@ SpriteAtlas:
   - {fileID: -1277265913, guid: eb72efe714b07a64e945746106fb0a48, type: 3}
   - {fileID: -685955863, guid: eb72efe714b07a64e945746106fb0a48, type: 3}
   - {fileID: -2055590612, guid: eb72efe714b07a64e945746106fb0a48, type: 3}
+  - {fileID: -1055757372, guid: 6d6a2df7b6425754e82b1269e06bef2b, type: 3}
+  - {fileID: 958252668, guid: 6d6a2df7b6425754e82b1269e06bef2b, type: 3}
   - {fileID: 891610140, guid: 584da258b12a04946b288abdf92b1c58, type: 3}
   - {fileID: 2029717441, guid: 584da258b12a04946b288abdf92b1c58, type: 3}
   - {fileID: 1675170499, guid: 584da258b12a04946b288abdf92b1c58, type: 3}
@@ -169,6 +172,7 @@ SpriteAtlas:
   - {fileID: -1552572428, guid: 329bf24ea904a7245972d59d0c7d955d, type: 3}
   - {fileID: -1436286761, guid: 329bf24ea904a7245972d59d0c7d955d, type: 3}
   - {fileID: 21300000, guid: 66a262de8f2e1ff41a07725b04e4613c, type: 3}
+  - {fileID: 21300000, guid: f415647f30e7cfd488435db97ac302f6, type: 3}
   m_PackedSpriteNamesToIndex:
   - CatTreeShadow
   - Flower Anim Pink_2
@@ -216,6 +220,7 @@ SpriteAtlas:
   - GrassFaded_2
   - GrassFaded_0
   - GrassFaded_1
+  - DoorBtn
   - CatTree
   - Grass_2
   - Grass_0
@@ -243,6 +248,8 @@ SpriteAtlas:
   - GrassTileShadow_3
   - GrassTileShadow_0
   - GrassTileShadow_1
+  - Door_0
+  - Door_1
   - GrassTileInnerUnderground_1
   - GrassTileInnerUnderground_0
   - GrassTileInnerUnderground_3
@@ -289,6 +296,7 @@ SpriteAtlas:
   - Flower Anim Yellow_0
   - Flower Anim Yellow_1
   - BackgroundDay
+  - BackgroundGrassEdge
   m_RenderDataMap: {}
   m_Tag: Environment
   m_IsVariant: 0

@@ -19,6 +19,10 @@ namespace Platformer
         public bool canWallJump;
         public bool canWallRun;
         public bool canSprint;
+        [Space]
+        public bool canZoomMap;
+        public bool canViewMap;
+        public bool canEnterHiddenPath;
 
         float xInput = 0;
         float yInput = 0;
@@ -175,6 +179,8 @@ namespace Platformer
 
         public void Map(bool open)
         {
+            if(!canViewMap) return;
+
             if (open)
             {
                 virtualCamera.gameObject.SetActive(false);
@@ -623,9 +629,9 @@ namespace Platformer
                 EnableJumpEffect(false);
                 if (rb.velocity.y < 0)
                     lastFallingVelocity = rb.velocity.y;
-                Debug.Log(lastFallingVelocity);
                 if (lastFallingVelocity <= maxFallingVelocity)
                 {
+                    Debug.Log(lastFallingVelocity);
                     if (canLoseLife && totalLives > 0)
                     {
                         canLoseLife = false;
@@ -895,6 +901,19 @@ namespace Platformer
             {
                 canSprint = true;
             }
+
+            else if(ability == AbilityType.ZoomMap)
+            {
+                canZoomMap = true;
+            }
+            else if (ability == AbilityType.ViewMap)
+            {
+                canViewMap = true;
+            }
+            else if (ability == AbilityType.EnterHiddenPath)
+            {
+                canEnterHiddenPath = true;
+            }
         }
 
         //Effects
@@ -974,6 +993,9 @@ namespace Platformer
         //Camera 
         void ZoomCamera()
         {
+            if (!canZoomMap)
+                return;
+
             float panSpeed = cameraZoomSpeed;
             if (isPlayerPanningCamera)
                 panSpeed *= 5;

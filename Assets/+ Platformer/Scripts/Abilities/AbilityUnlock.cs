@@ -24,5 +24,8 @@ public enum AbilityType
     LedgeGrab,
     WallJump,
     WallRun,
-    Sprint
+    Sprint,
+    ZoomMap,
+    ViewMap,
+    EnterHiddenPath
 }
