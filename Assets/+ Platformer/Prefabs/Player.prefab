@@ -1398,7 +1398,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6028078238172907624
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2057,6 +2057,9 @@ MonoBehaviour:
   canWallJump: 0
   canWallRun: 0
   canSprint: 0
+  canZoomMap: 0
+  canViewMap: 0
+  canEnterHiddenPath: 0
   walkVelocity: 5
   walkAcceleration: 25
   sprintVelocity: 10
@@ -2106,6 +2109,7 @@ MonoBehaviour:
   flowerCollection: {fileID: 1875193655}
   staminaConfidence: {fileID: 6583660533149210359}
   mobileControls: {fileID: 0}
+  canvas: {fileID: 7252707289465520629}
   visuals: {fileID: 8347634021541828949}
   playerAnims:
   - {fileID: 9208914898882252177}

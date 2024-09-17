@@ -27,13 +27,16 @@ public class AbilityUnlockPanel : MonoBehaviour
         abilityNameTxt.text = ability.abilityName;
         abilityDescriptionTxt.text = ability.abilityDescription;
         playerController.canPlayerMove = false;
+
+        okButton.onClick.RemoveAllListeners();
+        okButton.onClick.AddListener(Close);
     }
 
     void Open()
     {
         gameObject.SetActive(true);
         mainPanel.transform.DOScale(0, 0);
-        mainPanel.transform.DOScale(1, 0.5f);
+        mainPanel.transform.DOScale(1, 0.5f).OnComplete(()=>Time.timeScale = 0);
     }
 
     void Close()
@@ -41,5 +44,6 @@ public class AbilityUnlockPanel : MonoBehaviour
         playerController.canPlayerMove = true;
         mainPanel.transform.DOScale(1, 0);
         mainPanel.transform.DOScale(0, 0.5f).OnComplete(() => gameObject.SetActive(false));
+        Time.timeScale = 1;
     }
 }

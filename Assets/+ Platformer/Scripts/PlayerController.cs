@@ -108,6 +108,7 @@ namespace Platformer
         public FlowerCollection flowerCollection;
         public StaminaConfidence staminaConfidence;
         public MobileControls mobileControls;
+        public GameObject canvas;
         [Space]
         [SerializeField] Transform visuals;
         [SerializeField] Animator[] playerAnims;
@@ -896,10 +897,12 @@ namespace Platformer
             else if (ability == AbilityType.WallRun)
             {
                 canWallRun = true;
+                canvas.SetActive(true);
             }
             else if (ability == AbilityType.Sprint)
             {
                 canSprint = true;
+                canvas.SetActive(true);
             }
 
             else if(ability == AbilityType.ZoomMap)
