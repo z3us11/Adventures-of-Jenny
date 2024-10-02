@@ -86,6 +86,7 @@ namespace Platformer
         [SerializeField] GameObject jumpEffectParticle;
 
         bool isSpawningWalkParticles = false;
+        bool isMakingWalkSound = false;
         bool isJumping = false;
         [Header("Camera")]
         [SerializeField] CinemachineVirtualCamera virtualCamera;
@@ -184,11 +185,13 @@ namespace Platformer
 
             if (open)
             {
+                canPlayerMove = false;
                 virtualCamera.gameObject.SetActive(false);
                 mapCamera.gameObject.SetActive(true);
             }
             else
             {
+                canPlayerMove = true;
                 virtualCamera.gameObject.SetActive(true);
                 mapCamera.gameObject.SetActive(false);
             }
@@ -295,6 +298,28 @@ namespace Platformer
 
                 //Effects
                 StartCoroutine(WalkParticles(playerGround));
+
+                //Sound Fx
+                if (isWalking || isWallRunning)
+                {
+                    AudioManager.instance.walkSFxAudioSource.volume = 0.75f;
+                    AudioManager.instance.grassSFxAudioSource.pitch = 2f;
+                    AudioManager.instance.grassSFxAudioSource.volume = 1;
+                }
+                else if (IsWallSliding())
+                {
+                    AudioManager.instance.walkSFxAudioSource.volume = 0;
+                    AudioManager.instance.grassSFxAudioSource.pitch = 2.5f;
+                    AudioManager.instance.grassSFxAudioSource.volume = 1;
+                }
+                else
+                {
+                    AudioManager.instance.walkSFxAudioSource.volume = 0;
+                    AudioManager.instance.grassSFxAudioSource.volume = 0;
+                }
+
+                AudioManager.instance.windAmbientSound.volume = MathUtils.Map(transform.position.y, 25, 70, 0, 1);
+
             }
 
             if (isTouchingLedge)
@@ -570,6 +595,8 @@ namespace Platformer
 
         void ApplyJumpForce(bool isNormalJump = true)
         {
+            AudioManager.instance.PlaySoundFx(AudioManager.SoundFxs.Jump);
+            
             StartCoroutine(IsJumping());
             if (isSprintPressed)
                 isSprintingWhileJumping = true;
@@ -609,7 +636,7 @@ namespace Platformer
 
         private void WallSliding()
         {
-            if (IsWallSliding())
+            if (IsWallSliding() && xInput == 0)
             {
                 if (!isScaleSet)
                 {
@@ -661,7 +688,6 @@ namespace Platformer
                     isWallRunning = true;
                     rb.velocity = new Vector2(rb.velocity.x, walkVelocity);
                     StartCoroutine(WalkParticles(playerWall));
-
                 }
             }
             else
@@ -991,6 +1017,17 @@ namespace Platformer
                 }
             }
 
+        }
+
+        IEnumerator PlayWalkSoundFx(float time, float pitch = 1)
+        {
+            if (!isMakingWalkSound)
+            {
+                isMakingWalkSound = true;
+                AudioManager.instance.PlaySoundFx(AudioManager.SoundFxs.GrassWalk);
+                yield return new WaitForSeconds(time);
+                isMakingWalkSound = false;
+            }
         }
 
         //Camera 

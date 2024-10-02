@@ -41,6 +41,8 @@ public class Flower : MonoBehaviour
     private void CollectFlower()
     {
         //transform.parent = null;
+        AudioManager.instance.PlayCollectFx();
+
         Sequence tween = DOTween.Sequence();
         tween.Append(transform.DOLocalMoveY(1.75f, 0.5f));
         tween.Append(transform.DOPunchScale(Vector3.one * 0.5f, 0.5f));

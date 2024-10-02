@@ -98,6 +98,7 @@ SpriteAtlas:
   - {fileID: 2128915294, guid: 6c4f5f42a1060cc4883d744c82f4cd50, type: 3}
   - {fileID: 21300000, guid: 93d0a39282d5bed418b05d3ba699bea1, type: 3}
   - {fileID: 21300000, guid: 354337c24a5dd0a48880caadfe94eca2, type: 3}
+  - {fileID: 21300000, guid: ecedaa03f62ec0944a1f2f6be6d88d23, type: 3}
   - {fileID: 21300000, guid: 0b1f4a34d60284445aeefa9ddabb4080, type: 3}
   - {fileID: 361179734, guid: f598b144c86fa514b949b487a1c4cf9c, type: 3}
   - {fileID: -1415932056, guid: f598b144c86fa514b949b487a1c4cf9c, type: 3}
@@ -223,6 +224,7 @@ SpriteAtlas:
   - GrassFaded_1
   - DoorBtn
   - GodRays
+  - Tree
   - CatTree
   - Grass_2
   - Grass_0

@@ -1,20 +1,34 @@
+using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Unity.VisualScripting.Member;
 
 public class AudioManager : MonoBehaviour
 {
-    [SerializeField] AudioSource sFxAudioSource;
+    public AudioSource walkSFxAudioSource;
+    public AudioSource grassSFxAudioSource;
+    public AudioSource collectSFxAudioSource;
+    public AudioSource jumpSFxAudioSource;
+    public AudioSource dayAmbientSound;
+    public AudioSource nightAmbientSound;
+    public AudioSource windAmbientSound;
+    public AudioSource caveAmbientSound;
+    public AudioSource music;
 
+    public AudioClip[] collectSoundFxs;
     public SoundFxAudio[] soundFxs;
 
+    List<AudioSource> collectAudioSrcs = new List<AudioSource>();
 
     public static AudioManager instance;
     public enum SoundFxs
     {
         None,
-        CoinAdd
+        Jump,
+        GrassWalk,
+        GrassSlide
     }
 
     private void Awake()
@@ -22,20 +36,86 @@ public class AudioManager : MonoBehaviour
         instance = this;
     }
 
+    private void Start()
+    {
+        for (int i = 0; i < 5; i++)
+        {
+            AudioSource newSource = gameObject.AddComponent<AudioSource>();
+            collectAudioSrcs.Add(newSource);
+        }
+    }
+
+
+    public void PlayCollectFx()
+    {
+        foreach (AudioSource source in collectAudioSrcs)
+        {
+            if (!source.isPlaying)
+            {
+                source.clip = collectSoundFxs[UnityEngine.Random.Range(0, collectSoundFxs.Length)];
+                source.volume = collectSFxAudioSource.volume;
+                //source.pitch = UnityEngine.Random.Range(0.75f, 1.25f);
+                source.Play();
+                return;
+            }
+        }
+
+        // If all AudioSources are busy, create a new one
+        AudioSource newSource = gameObject.AddComponent<AudioSource>();
+        newSource.clip = collectSoundFxs[UnityEngine.Random.Range(0, collectSoundFxs.Length)];
+        newSource.volume = collectSFxAudioSource.volume;
+        newSource.Play();
+        collectAudioSrcs.Add(newSource);
+    }
 
     public void PlaySoundFx(SoundFxs soundFx)
     {
-        for(int i = 0; i < soundFxs.Length; i++)
+        if (soundFx == SoundFxs.Jump)
+        {
+            jumpSFxAudioSource.clip = soundFxs[0].sFxAudioClip;
+            jumpSFxAudioSource.Play();
+            return;
+        }
+
+        for (int i = 0; i < soundFxs.Length; i++)
         {
             if (soundFx == soundFxs[i].sFxType)
             {
-                sFxAudioSource.clip = soundFxs[i].sFxAudioClip;
-                sFxAudioSource.Play();
+                walkSFxAudioSource.pitch = 1f;
+                walkSFxAudioSource.clip = soundFxs[i].sFxAudioClip;
+                walkSFxAudioSource.Play();
+                break;
             }
-
-
         }
     }
+
+    public void PlaySoundFx(SoundFxs soundFx, float pitch)
+    {
+        if (soundFx == SoundFxs.GrassWalk)
+        {
+            walkSFxAudioSource.pitch = 1.5f;
+            walkSFxAudioSource.clip = soundFxs[1].sFxAudioClip;
+            walkSFxAudioSource.Play();
+            return;
+        }
+    }
+
+    public void SwitchDay(bool isNight, float time)
+    {
+        if (!isNight)
+        {
+            dayAmbientSound.DOFade(0.3f, time);
+            nightAmbientSound.DOFade(0, time);
+            music.DOFade(0.1f, time);
+        }
+        else
+        {
+            dayAmbientSound.DOFade(0, time);
+            nightAmbientSound.DOFade(0.3f, time);
+            music.DOFade(0.02f, time);
+        }
+    }
+
     [Serializable]
     public class SoundFxAudio
     {

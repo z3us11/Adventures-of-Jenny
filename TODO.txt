@@ -13,3 +13,14 @@ TODO:
 > Added progression for the gameplay
 	- Collectibles, story elements
 	- New platform types(moving, crumbling)(?)
+
+> Paths visible only at night
+> Doors Unlocked by collecting certain number of certain flowers(multiple locks for single door)
+
+> Paths(partially visible) that are visible after hitting a switch
+
+> Someway to introduce stealth
+
+> get something from a path you enter and then exit
+
+> outer wilds like knowlege progression

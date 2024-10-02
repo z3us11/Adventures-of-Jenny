@@ -30,6 +30,8 @@ public class EnterHiddenPath : MonoBehaviour
                 Light2D playerLight = collision.transform.parent.GetComponent<PlayerController>().playerLight;
                 DOTween.ToAlpha(() => playerLight.color, x => playerLight.color = x, 1, 1);
                 //GameManager.instance.skyColor.SetColor("_TopColor", GameManager.instance.insideSkyTopColor);
+
+                AudioManager.instance.caveAmbientSound.volume = 0.5f;
             }
 
         }
@@ -58,6 +60,8 @@ public class EnterHiddenPath : MonoBehaviour
                 Light2D playerLight = collision.transform.parent.GetComponent<PlayerController>().playerLight;
                 DOTween.ToAlpha(() => playerLight.color, x => playerLight.color = x, 0, 1);
                 //GameManager.instance.skyColor.SetColor("_TopColor", GameManager.instance.daySkyTopColor);
+
+                AudioManager.instance.caveAmbientSound.volume = 0f;
             }
         }
     }

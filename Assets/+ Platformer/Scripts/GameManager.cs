@@ -1,6 +1,7 @@
 using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
@@ -31,10 +32,15 @@ public class GameManager : MonoBehaviour
     public float nightTime;
     public bool simulate;
     float elapsedTime;
-
+   
     public bool isNight = false;
     public bool timeChanging = false;
     public bool isInHiddenPath = false;
+
+    [Header("UI")]
+    public TMP_Text fpsTxt;
+    private float deltaTime = 0.0f;
+
     public static GameManager instance;
 
     private void Awake()
@@ -58,6 +64,8 @@ public class GameManager : MonoBehaviour
             skyColor.SetColor("_TopColor", daySkyTopColor);
             skyColor.SetColor("_BottomColor", daySkyBottomColor);
 
+            AudioManager.instance.SwitchDay(false, 0);
+
             stars.SetActive(false);
         }
         else
@@ -65,6 +73,8 @@ public class GameManager : MonoBehaviour
             globalLight.color = insideColor;
             skyColor.SetColor("_TopColor", nightSkyTopColor);
             skyColor.SetColor("_BottomColor", nightSkyBottomColor);
+
+            AudioManager.instance.SwitchDay(true, 1);
 
             stars.SetActive(true);
         }
@@ -83,6 +93,7 @@ public class GameManager : MonoBehaviour
             //    return;
             //}
 
+            
             DOTween.To(() => globalLight.color, x => globalLight.color = x, outsideColor, changeDuration);
             skyColor.DOColor(daySkyTopColor, "_TopColor", changeDuration);
             skyColor.DOColor(daySkyBottomColor, "_BottomColor", changeDuration).OnComplete(()=> 
@@ -119,6 +130,9 @@ public class GameManager : MonoBehaviour
 
             
         }
+
+        AudioManager.instance.SwitchDay(_isNight, changeDuration);
+
     }
 
     private void Update()
@@ -131,6 +145,15 @@ public class GameManager : MonoBehaviour
 
         if (simulate)
             DayCycle();
+
+        // Calculate frame time
+        deltaTime += (Time.unscaledDeltaTime - deltaTime) * 0.1f;
+
+        // Calculate FPS
+        float fps = 1.0f / deltaTime;
+
+        // Display FPS in the UI Text
+        fpsTxt.text = string.Format("{0:0.} FPS", fps);
 
     }
 
