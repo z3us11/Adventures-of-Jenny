@@ -278,6 +278,27 @@ namespace Platformer
                 mobileControls.sprintBtn.gameObject.SetActive(canSprint);
             }
 
+            //Sound Fx
+            if (isWalking || isWallRunning)
+            {
+                AudioManager.instance.walkSFxAudioSource.volume = 0.75f;
+                AudioManager.instance.grassSFxAudioSource.pitch = 2f;
+                AudioManager.instance.grassSFxAudioSource.volume = 1;
+            }
+            else if (IsWallSliding())
+            {
+                AudioManager.instance.walkSFxAudioSource.volume = 0;
+                AudioManager.instance.grassSFxAudioSource.pitch = 2.5f;
+                AudioManager.instance.grassSFxAudioSource.volume = 1;
+            }
+            else
+            {
+                AudioManager.instance.walkSFxAudioSource.volume = 0;
+                AudioManager.instance.grassSFxAudioSource.volume = 0;
+            }
+
+            AudioManager.instance.windAmbientSound.volume = MathUtils.Map(transform.position.y, 25, 70, 0, 1);
+
             if (!canPlayerMove)
                 return;
 
@@ -299,26 +320,7 @@ namespace Platformer
                 //Effects
                 StartCoroutine(WalkParticles(playerGround));
 
-                //Sound Fx
-                if (isWalking || isWallRunning)
-                {
-                    AudioManager.instance.walkSFxAudioSource.volume = 0.75f;
-                    AudioManager.instance.grassSFxAudioSource.pitch = 2f;
-                    AudioManager.instance.grassSFxAudioSource.volume = 1;
-                }
-                else if (IsWallSliding())
-                {
-                    AudioManager.instance.walkSFxAudioSource.volume = 0;
-                    AudioManager.instance.grassSFxAudioSource.pitch = 2.5f;
-                    AudioManager.instance.grassSFxAudioSource.volume = 1;
-                }
-                else
-                {
-                    AudioManager.instance.walkSFxAudioSource.volume = 0;
-                    AudioManager.instance.grassSFxAudioSource.volume = 0;
-                }
-
-                AudioManager.instance.windAmbientSound.volume = MathUtils.Map(transform.position.y, 25, 70, 0, 1);
+               
 
             }
 

@@ -21,14 +21,18 @@ public class FlowManager : MonoBehaviour
 
     private void FadeOut()
     {
-        fadeIn.DOFade(0, 3f).OnComplete(() =>
+        fadeIn.DOFade(1, 0.5f).OnComplete(() =>
         {
-            fadeIn.gameObject.SetActive(false);
-            virtualCamera.transform.DOMove(player.transform.position, 1f).OnComplete(() =>
+            fadeIn.DOFade(0, 3f).OnComplete(() =>
             {
-                virtualCamera.Follow = player.transform;
-                player.canPlayerMove = true;
+                fadeIn.gameObject.SetActive(false);
+                virtualCamera.transform.DOMove(player.transform.position, 1f).OnComplete(() =>
+                {
+                    virtualCamera.Follow = player.transform;
+                    player.canPlayerMove = true;
+                });
             });
         });
+        
     }
 }
