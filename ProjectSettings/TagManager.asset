@@ -51,11 +51,17 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Tress
-    uniqueID: 1803942809
-    locked: 0
   - name: ForegroundShadow
     uniqueID: 380424539
+    locked: 0
+  - name: Trees_Behind_2
+    uniqueID: 784846091
+    locked: 0
+  - name: Trees
+    uniqueID: 3329155089
+    locked: 0
+  - name: BackgroundGrass
+    uniqueID: 2947624555
     locked: 0
   - name: GrassBack
     uniqueID: 1811145025
@@ -68,6 +74,9 @@ TagManager:
     locked: 0
   - name: Flower
     uniqueID: 2856223263
+    locked: 0
+  - name: Gem
+    uniqueID: 608949041
     locked: 0
   - name: Foreground
     uniqueID: 2165975741

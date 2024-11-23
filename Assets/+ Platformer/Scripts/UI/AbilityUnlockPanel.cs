@@ -8,7 +8,7 @@ using DG.Tweening;
 
 public class AbilityUnlockPanel : MonoBehaviour
 {
-    public GameObject mainPanel;
+    public Image mainPanel;
     public TMP_Text abilityNameTxt;
     public TMP_Text abilityDescriptionTxt;
     public Button okButton;
@@ -34,16 +34,18 @@ public class AbilityUnlockPanel : MonoBehaviour
 
     void Open()
     {
+        AudioManager.instance.PlayAbilityCollectFx();
+
         gameObject.SetActive(true);
-        mainPanel.transform.DOScale(0, 0);
-        mainPanel.transform.DOScale(1, 0.5f).OnComplete(()=>Time.timeScale = 0);
+        mainPanel.DOFade(0, 0);
+        mainPanel.DOFade(1, 0.5f).OnComplete(()=>Time.timeScale = 0);
     }
 
     void Close()
     {
         playerController.canPlayerMove = true;
-        mainPanel.transform.DOScale(1, 0);
-        mainPanel.transform.DOScale(0, 0.5f).OnComplete(() => gameObject.SetActive(false));
+        mainPanel.DOFade(1, 0);
+        mainPanel.DOFade(0, 0.5f).OnComplete(() => gameObject.SetActive(false));
         Time.timeScale = 1;
     }
 }

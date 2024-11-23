@@ -20,8 +20,13 @@ public class GameStart : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Return))
         {
-            fadeOut.DOFade(1, 1f).OnComplete(() => SceneManager.LoadScene("Platformer"));
-            ;
+           SwitchScene();
+            
         }
+    }
+
+    public void SwitchScene()
+    {
+        fadeOut.DOFade(1, 1f).OnComplete(() => SceneManager.LoadScene("Platformer"));
     }
 }

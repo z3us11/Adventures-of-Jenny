@@ -27,6 +27,14 @@ PrefabInstance:
       propertyPath: flowerColor
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 622939287, guid: e77b19adbbdf60640b266adcdfbb7c96, type: 3}
+      propertyPath: m_SpriteTilingProperty.oldSize.x
+      value: 0.62109375
+      objectReference: {fileID: 0}
+    - target: {fileID: 622939287, guid: e77b19adbbdf60640b266adcdfbb7c96, type: 3}
+      propertyPath: m_SpriteTilingProperty.oldSize.y
+      value: 0.78125
+      objectReference: {fileID: 0}
     - target: {fileID: 3347100602252247986, guid: e77b19adbbdf60640b266adcdfbb7c96, type: 3}
       propertyPath: m_Name
       value: Flower_Cyan
@@ -137,7 +145,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9051424430118844018, guid: e77b19adbbdf60640b266adcdfbb7c96, type: 3}
       propertyPath: m_Color.r
-      value: 0
+      value: 0.24313726
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 1816078611642635148, guid: e77b19adbbdf60640b266adcdfbb7c96, type: 3}

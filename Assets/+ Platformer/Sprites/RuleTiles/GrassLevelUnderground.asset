@@ -206,7 +206,7 @@ MonoBehaviour:
     m_RuleTransform: 0
   - m_Id: 10
     m_Sprites:
-    - {fileID: -2032877397, guid: 1920a9c92c7e0e44eb53d8634953fa8a, type: 3}
+    - {fileID: 121868359, guid: aff2e31dcf45dd74d8f1c6b8312f087a, type: 3}
     - {fileID: 121868359, guid: aff2e31dcf45dd74d8f1c6b8312f087a, type: 3}
     m_GameObject: {fileID: 0}
     m_MinAnimationSpeed: 1
@@ -307,7 +307,7 @@ MonoBehaviour:
   - m_OriginalSprite: {fileID: -1044019435, guid: bbbfcf36af6d054499691589f6a02708, type: 3}
     m_OverrideSprite: {fileID: 121868359, guid: aff2e31dcf45dd74d8f1c6b8312f087a, type: 3}
   - m_OriginalSprite: {fileID: -2032877397, guid: 1920a9c92c7e0e44eb53d8634953fa8a, type: 3}
-    m_OverrideSprite: {fileID: -2032877397, guid: 1920a9c92c7e0e44eb53d8634953fa8a, type: 3}
+    m_OverrideSprite: {fileID: 121868359, guid: aff2e31dcf45dd74d8f1c6b8312f087a, type: 3}
   m_GameObjects:
   - m_OriginalGameObject: {fileID: 8759430535198843959, guid: 4edfd9aae7f6cd54aa1c2cbdc8e1bf4f, type: 3}
     m_OverrideGameObject: {fileID: 8759430535198843959, guid: eefa17163e840ad48a9a68e999fa38ac, type: 3}

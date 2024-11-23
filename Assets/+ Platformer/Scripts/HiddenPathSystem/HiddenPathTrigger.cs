@@ -19,7 +19,6 @@ public class HiddenPathTrigger : MonoBehaviour
             if(playerController.canEnterHiddenPath)
             {
                 DOTween.ToAlpha(() => tilemap.color, x => tilemap.color = x, 0, 1);
-
             }
         }
     }

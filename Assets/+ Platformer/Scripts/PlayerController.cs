@@ -28,6 +28,7 @@ namespace Platformer
         float yInput = 0;
         bool isSprintPressed = false;
         bool isJumpPressed = false;
+        
         [Header("Movement")]
         [SerializeField] float walkVelocity = 5f;
         [SerializeField] float walkAcceleration = 10f;
@@ -36,6 +37,7 @@ namespace Platformer
         float velocity = 0;
         float acceleration = 0;
         float currentFrameVelocity = 0;
+
         [Header("Jump")]
         [SerializeField] float jumpHeight;
         [SerializeField] float jumpMultiplier;
@@ -65,6 +67,7 @@ namespace Platformer
         public bool IsTouchingLedge { get { return isTouchingLedge; } set { isTouchingLedge = value; } }
         Ledge currentLedge;
         public Ledge CurrentLedge { get { return currentLedge; } set { currentLedge = value; } }
+
         [Header("Wall Slide")]
         [SerializeField] Transform wallCheck;
         [SerializeField] LayerMask wallLayer;
@@ -72,6 +75,7 @@ namespace Platformer
         bool isScaleSet = false;
         bool isWallRunning = false;
         [Space]
+
         [Header("Effects")]
         [SerializeField] Transform playerGround;
         [SerializeField] Transform playerWall;
@@ -88,6 +92,7 @@ namespace Platformer
         bool isSpawningWalkParticles = false;
         bool isMakingWalkSound = false;
         bool isJumping = false;
+
         [Header("Camera")]
         [SerializeField] CinemachineVirtualCamera virtualCamera;
         [SerializeField] CinemachineVirtualCamera mapCamera;
@@ -101,9 +106,11 @@ namespace Platformer
         bool startedLookingBack = false;
         bool lookBackComplete = false;
         bool isMapButtonPressed = false;
+
         [Header("UI")]
         public AbilityUnlockPanel abilityUnlockPanel;
         public Toggle mobileControlsToggle;
+
         [Space]
         [Header("Other Scripts")]
         public FlowerCollection flowerCollection;
@@ -114,6 +121,7 @@ namespace Platformer
         [SerializeField] Transform visuals;
         [SerializeField] Animator[] playerAnims;
         public Light2D playerLight;
+
         [Header("Lives")]
         public GameObject[] lives;
         bool canLoseLife = true;
@@ -134,11 +142,16 @@ namespace Platformer
         {
             rb = GetComponent<Rigidbody2D>();
             totalLives = lives.Length;
+
+            
         }
 
         private void Start()
         {
             CheckForMobileControls();
+
+            AudioManager.instance.walkSFxAudioSource.playOnAwake = true;
+            AudioManager.instance.grassSFxAudioSource.playOnAwake = true;
         }
 
         void OnMoveX(InputValue inputValue)
@@ -268,6 +281,8 @@ namespace Platformer
 
         private void Update()
         {
+            GameManager.instance.height = transform.position.y;
+
             if (mobileControls.gameObject.activeSelf)
             {
                 xInput = mobileControls.onScreenXInput;
@@ -598,7 +613,9 @@ namespace Platformer
         void ApplyJumpForce(bool isNormalJump = true)
         {
             AudioManager.instance.PlaySoundFx(AudioManager.SoundFxs.Jump);
-            
+            if(isPerfectJump)
+                AudioManager.instance.PlaySoundFx(AudioManager.SoundFxs.PerfectJump);
+
             StartCoroutine(IsJumping());
             if (isSprintPressed)
                 isSprintingWhileJumping = true;

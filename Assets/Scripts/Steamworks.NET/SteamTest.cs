@@ -1,3 +1,6 @@
+#if UNITY_ANDROID || UNITY_WEBGL
+
+#else
 using Steamworks;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,3 +16,4 @@ public class SteamTest : MonoBehaviour
         Debug.Log(SteamFriends.GetPersonaName());
     }
 }
+#endif

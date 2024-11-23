@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class MobileControls : MonoBehaviour
 {
     public Joystick joystick;
+    public GameObject dPad;
     public Button dpadUp;
     public Button dpadDown;
     public Button dpadLeft;
@@ -36,7 +37,7 @@ public class MobileControls : MonoBehaviour
     {
         gameObject.SetActive(mobileControlsToggle.isOn);
 
-        joystick.gameObject.SetActive(mobileControlsToggle.isOn);
+        dPad.gameObject.SetActive(mobileControlsToggle.isOn);
         jumpBtn.gameObject.SetActive(mobileControlsToggle.isOn);
         sprintBtn.gameObject.SetActive(mobileControlsToggle.isOn);
     }

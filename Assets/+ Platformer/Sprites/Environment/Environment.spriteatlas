@@ -51,11 +51,15 @@ SpriteAtlas:
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
   - {fileID: 21300000, guid: 53e232103fa4c3740aa9aa6df2eb84a5, type: 3}
+  - {fileID: 21300000, guid: d6fcb3807ed798b41bc13553db1b94de, type: 3}
   - {fileID: 368811854, guid: fe5a30314c848ac49a804efde58f7739, type: 3}
   - {fileID: 464517065, guid: fe5a30314c848ac49a804efde58f7739, type: 3}
   - {fileID: -1131318777, guid: fe5a30314c848ac49a804efde58f7739, type: 3}
   - {fileID: -419633514, guid: fe5a30314c848ac49a804efde58f7739, type: 3}
+  - {fileID: 1803996747, guid: 5b51ed318780ebb47b090fddaefa7f29, type: 3}
   - {fileID: 21300000, guid: 84862f614f832c84bafdfbedf579254b, type: 3}
+  - {fileID: 21300000, guid: c6f28b91230da0248ace33f2e16a260b, type: 3}
+  - {fileID: 21300000, guid: be3a1ea17d0a5734081578ea499adf06, type: 3}
   - {fileID: 708212090, guid: 296cbbc1f33b1bb4499b5e3eb1ffed93, type: 3}
   - {fileID: -516990492, guid: 296cbbc1f33b1bb4499b5e3eb1ffed93, type: 3}
   - {fileID: 1081739058, guid: 296cbbc1f33b1bb4499b5e3eb1ffed93, type: 3}
@@ -98,7 +102,9 @@ SpriteAtlas:
   - {fileID: 2128915294, guid: 6c4f5f42a1060cc4883d744c82f4cd50, type: 3}
   - {fileID: 21300000, guid: 93d0a39282d5bed418b05d3ba699bea1, type: 3}
   - {fileID: 21300000, guid: 354337c24a5dd0a48880caadfe94eca2, type: 3}
+  - {fileID: 21300000, guid: 6a5e9903403f7b04782849153c61be32, type: 3}
   - {fileID: 21300000, guid: ecedaa03f62ec0944a1f2f6be6d88d23, type: 3}
+  - {fileID: 21300000, guid: fd1a14244ed69b04192170095dd037c6, type: 3}
   - {fileID: 21300000, guid: 0b1f4a34d60284445aeefa9ddabb4080, type: 3}
   - {fileID: 361179734, guid: f598b144c86fa514b949b487a1c4cf9c, type: 3}
   - {fileID: -1415932056, guid: f598b144c86fa514b949b487a1c4cf9c, type: 3}
@@ -117,6 +123,7 @@ SpriteAtlas:
   - {fileID: -1279738082, guid: 36eaf785b6e5c7f4490f457c83f92c31, type: 3}
   - {fileID: 1356335890, guid: 36eaf785b6e5c7f4490f457c83f92c31, type: 3}
   - {fileID: -811025475, guid: 36eaf785b6e5c7f4490f457c83f92c31, type: 3}
+  - {fileID: 21300000, guid: 7c6082f67eedd4d4eae986c9a7b491e1, type: 3}
   - {fileID: -564508450, guid: eb72efe714b07a64e945746106fb0a48, type: 3}
   - {fileID: -1099765540, guid: eb72efe714b07a64e945746106fb0a48, type: 3}
   - {fileID: 1330300746, guid: eb72efe714b07a64e945746106fb0a48, type: 3}
@@ -128,6 +135,10 @@ SpriteAtlas:
   - {fileID: -2055590612, guid: eb72efe714b07a64e945746106fb0a48, type: 3}
   - {fileID: -1055757372, guid: 6d6a2df7b6425754e82b1269e06bef2b, type: 3}
   - {fileID: 958252668, guid: 6d6a2df7b6425754e82b1269e06bef2b, type: 3}
+  - {fileID: 21300000, guid: 1696b328394394245bdb6a35730c5959, type: 3}
+  - {fileID: -797814705, guid: bcdc5d38ea1f42349bcc9d4934769240, type: 3}
+  - {fileID: 1437926507, guid: bcdc5d38ea1f42349bcc9d4934769240, type: 3}
+  - {fileID: -1385123484, guid: bcdc5d38ea1f42349bcc9d4934769240, type: 3}
   - {fileID: 891610140, guid: 584da258b12a04946b288abdf92b1c58, type: 3}
   - {fileID: 2029717441, guid: 584da258b12a04946b288abdf92b1c58, type: 3}
   - {fileID: 1675170499, guid: 584da258b12a04946b288abdf92b1c58, type: 3}
@@ -143,6 +154,8 @@ SpriteAtlas:
   - {fileID: -2032877397, guid: 1920a9c92c7e0e44eb53d8634953fa8a, type: 3}
   - {fileID: 21300000, guid: ad14670a42457354f99c7fc1e307dc04, type: 3}
   - {fileID: 21300000, guid: 1bc49a8a3e413394e96d23ec2ac6d1fb, type: 3}
+  - {fileID: 21300000, guid: b0e3035bbd9348644b60a3f36d8d3be4, type: 3}
+  - {fileID: 21300000, guid: 5cf4c29b26936a94e8d7d69e345ad0f5, type: 3}
   - {fileID: 21300000, guid: 8ff3714cd09222c4081dc13876f0dff3, type: 3}
   - {fileID: -66750605, guid: ef49c95c9323bda48b7ef7fbfe3d4162, type: 3}
   - {fileID: 2071722188, guid: ef49c95c9323bda48b7ef7fbfe3d4162, type: 3}
@@ -158,6 +171,7 @@ SpriteAtlas:
   - {fileID: 376971118, guid: aff2e31dcf45dd74d8f1c6b8312f087a, type: 3}
   - {fileID: -489202177, guid: aff2e31dcf45dd74d8f1c6b8312f087a, type: 3}
   - {fileID: 1935955817, guid: aff2e31dcf45dd74d8f1c6b8312f087a, type: 3}
+  - {fileID: 21300000, guid: 35b8952dc9806ce48bb77077a2a035d1, type: 3}
   - {fileID: 1844008217, guid: dd56cc3d2f398454b9c73b3bbfc1657f, type: 3}
   - {fileID: 615684510, guid: dd56cc3d2f398454b9c73b3bbfc1657f, type: 3}
   - {fileID: -1689986415, guid: dd56cc3d2f398454b9c73b3bbfc1657f, type: 3}
@@ -166,6 +180,7 @@ SpriteAtlas:
   - {fileID: 406712464, guid: 6a41fb4d57bc300469584bfe4524c244, type: 3}
   - {fileID: 1526467756, guid: 6a41fb4d57bc300469584bfe4524c244, type: 3}
   - {fileID: 1853479890, guid: 6a41fb4d57bc300469584bfe4524c244, type: 3}
+  - {fileID: 21300000, guid: 385e8a6da72cb5b40bfb61f7a936d129, type: 3}
   - {fileID: 281039447, guid: 7bdc991eaec344a4fbce46a49fc0c9f0, type: 3}
   - {fileID: 888831204, guid: 7bdc991eaec344a4fbce46a49fc0c9f0, type: 3}
   - {fileID: -369889214, guid: 7bdc991eaec344a4fbce46a49fc0c9f0, type: 3}
@@ -177,11 +192,15 @@ SpriteAtlas:
   - {fileID: 21300000, guid: f415647f30e7cfd488435db97ac302f6, type: 3}
   m_PackedSpriteNamesToIndex:
   - CatTreeShadow
+  - Cat Village Shadow
   - Flower Anim Pink_2
   - Flower Anim Pink_3
   - Flower Anim Pink_0
   - Flower Anim Pink_1
+  - TotemRockCavity_0
   - StaminaConfidenceMeter
+  - Beach
+  - Vine
   - CatSpriteSheet_13
   - CatSpriteSheet_12
   - CatSpriteSheet_15
@@ -224,7 +243,9 @@ SpriteAtlas:
   - GrassFaded_1
   - DoorBtn
   - GodRays
+  - WoodenPlatform
   - Tree
+  - Cat Village
   - CatTree
   - Grass_2
   - Grass_0
@@ -243,6 +264,7 @@ SpriteAtlas:
   - Flower Anim Cyan_2
   - Flower Anim Cyan_1
   - Flower Anim Cyan_0
+  - TotemRockGlow
   - GrassTileShadow_8
   - GrassTileShadow_6
   - GrassTileShadow_7
@@ -254,6 +276,10 @@ SpriteAtlas:
   - GrassTileShadow_1
   - Door_0
   - Door_1
+  - Mountain
+  - TotemGem_2
+  - TotemGem_0
+  - TotemGem_1
   - GrassTileInnerUnderground_1
   - GrassTileInnerUnderground_0
   - GrassTileInnerUnderground_3
@@ -269,6 +295,8 @@ SpriteAtlas:
   - GrassTile3_4
   - BackgroundNight
   - Collar
+  - TotemRock
+  - Billboard
   - Star
   - GrassTileFadedInner_0
   - GrassTileFadedInner_1
@@ -284,6 +312,7 @@ SpriteAtlas:
   - GrassTileUnderground_1
   - GrassTileUnderground_0
   - GrassTileUnderground_8
+  - MountainBack
   - WaterInner_1
   - WaterInner_0
   - WaterInner_3
@@ -292,6 +321,7 @@ SpriteAtlas:
   - GrassTile3Inner_2
   - GrassTile3Inner_1
   - GrassTile3Inner_0
+  - PalmTree
   - Tress_1
   - Tress_0
   - Tress_2

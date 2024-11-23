@@ -15,6 +15,8 @@ public class Door : MonoBehaviour
 
     IEnumerator StartOpenDoor()
     {
+        AudioManager.instance.PlayDoorOpenSound();
+
         doorBottom.DOLocalMoveY(1.15f, 0.25f).SetEase(ease);
         yield return new WaitForSeconds(0);
     }

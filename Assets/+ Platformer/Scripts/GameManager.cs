@@ -40,7 +40,8 @@ public class GameManager : MonoBehaviour
     [Header("UI")]
     public TMP_Text fpsTxt;
     private float deltaTime = 0.0f;
-
+    public TMP_Text heightTxt;
+    public float height;
     public static GameManager instance;
 
     private void Awake()
@@ -154,6 +155,8 @@ public class GameManager : MonoBehaviour
 
         // Display FPS in the UI Text
         fpsTxt.text = string.Format("{0:0.} FPS", fps);
+
+        heightTxt.text = $"Height  {height.ToString("0")}";
 
     }
 

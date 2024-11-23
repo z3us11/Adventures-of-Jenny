@@ -10,7 +10,10 @@ public class AudioManager : MonoBehaviour
     public AudioSource walkSFxAudioSource;
     public AudioSource grassSFxAudioSource;
     public AudioSource collectSFxAudioSource;
+    public AudioSource abilityCollectSFxAudioSource;
+    public AudioSource doorOpenAudioSource;
     public AudioSource jumpSFxAudioSource;
+    public AudioSource perfectJumpSFxAudioSource;
     public AudioSource dayAmbientSound;
     public AudioSource nightAmbientSound;
     public AudioSource windAmbientSound;
@@ -18,6 +21,7 @@ public class AudioManager : MonoBehaviour
     public AudioSource music;
 
     public AudioClip[] collectSoundFxs;
+    public AudioClip[] perfectJumpSoundFxs;
     public SoundFxAudio[] soundFxs;
 
     List<AudioSource> collectAudioSrcs = new List<AudioSource>();
@@ -27,6 +31,7 @@ public class AudioManager : MonoBehaviour
     {
         None,
         Jump,
+        PerfectJump,
         GrassWalk,
         GrassSlide
     }
@@ -46,6 +51,9 @@ public class AudioManager : MonoBehaviour
 
     private void Start()
     {
+        walkSFxAudioSource.volume = 0;
+        grassSFxAudioSource.volume = 0;
+
         for (int i = 0; i < 5; i++)
         {
             AudioSource newSource = gameObject.AddComponent<AudioSource>();
@@ -53,6 +61,16 @@ public class AudioManager : MonoBehaviour
         }
     }
 
+
+    public void PlayDoorOpenSound()
+    {
+        doorOpenAudioSource.Play();
+    }
+
+    public void PlayAbilityCollectFx()
+    {
+        abilityCollectSFxAudioSource.Play();
+    }
 
     public void PlayCollectFx()
     {
@@ -84,6 +102,13 @@ public class AudioManager : MonoBehaviour
             jumpSFxAudioSource.Play();
             return;
         }
+
+        //if (soundFx == SoundFxs.PerfectJump)
+        //{
+        //    perfectJumpSFxAudioSource.clip = perfectJumpSoundFxs[0];
+        //    perfectJumpSFxAudioSource.Play();
+        //    return;
+        //}
 
         for (int i = 0; i < soundFxs.Length; i++)
         {
