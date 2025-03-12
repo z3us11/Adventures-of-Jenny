@@ -14,6 +14,11 @@ public class Flower : MonoBehaviour
     ParticleSystem subParticle;
     bool collectedFlower = false;
 
+    private void Awake()
+    {
+        CodeArchitecture.EventManager.StartListening<bool>(CodeArchitecture.EventName.TimeChanged, OnTimeChange);
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.gameObject.CompareTag("Player"))
@@ -48,6 +53,17 @@ public class Flower : MonoBehaviour
         tween.Append(transform.DOPunchScale(Vector3.one * 0.5f, 0.5f));
         tween.Append(transform.DOScale(0, 0.25f));
         tween.OnComplete(()=>gameObject.SetActive(false));
+    }
+
+    void OnTimeChange(bool isNight)
+    {
+        GetComponent<BoxCollider2D>().enabled = !isNight ? true : false;
+        GetComponent<Animator>().enabled = !isNight ? true : false;
+    }
+
+    private void OnDestroy()
+    {
+        CodeArchitecture.EventManager.StopListening<bool>(CodeArchitecture.EventName.TimeChanged, OnTimeChange);
     }
 }
 

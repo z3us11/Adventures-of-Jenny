@@ -520,7 +520,18 @@
                 {
                     "name": "",
                     "id": "d52bad3f-fc00-4bd8-9d15-f5fc57ba4f73",
-                    "path": "<Keyboard>/tab",
+                    "path": "<Keyboard>/enter",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "start",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "329f2a8c-0f84-45f7-9178-d2c9e4e8f8b2",
+                    "path": "<Keyboard>/numpadEnter",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

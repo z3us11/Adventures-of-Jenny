@@ -68,6 +68,10 @@ namespace Platformer
         Ledge currentLedge;
         public Ledge CurrentLedge { get { return currentLedge; } set { currentLedge = value; } }
 
+        [Header("Wall Jump")]
+        [SerializeField] bool isOther;
+        [SerializeField] float xWallJumpForce = 1.65f;
+        [SerializeField] float yWallJumpForce = 1.25f;
         [Header("Wall Slide")]
         [SerializeField] Transform wallCheck;
         [SerializeField] LayerMask wallLayer;
@@ -137,6 +141,7 @@ namespace Platformer
 
         private Rigidbody2D rb;
         private Animator perfectJumpAnim;
+        
 
         private void Awake()
         {
@@ -255,10 +260,21 @@ namespace Platformer
             if (isLedgeGrabbing)
                 return;
 
+            if (rb.velocity.magnitude == 0 && xInput == 0)
+                return;
             // Apply acceleration
             float targetVelocity = xInput * velocity;
             float currentVelocity = rb.velocity.x;
             float deltaVelocity = targetVelocity - currentVelocity;
+
+            if(isOther)
+            {
+                if (!isGrounded && xInput == 0)
+                {
+                    return;
+                }
+            }
+            
 
             // Clamp the delta velocity to acceleration
 
@@ -296,20 +312,29 @@ namespace Platformer
             //Sound Fx
             if (isWalking || isWallRunning)
             {
-                AudioManager.instance.walkSFxAudioSource.volume = 0.75f;
-                AudioManager.instance.grassSFxAudioSource.pitch = 2f;
-                AudioManager.instance.grassSFxAudioSource.volume = 1;
+                if (AudioManager.instance.walkSFxAudioSource.volume != 0.75f)
+                {
+                    AudioManager.instance.walkSFxAudioSource.volume = 0.75f;
+                    AudioManager.instance.grassSFxAudioSource.pitch = 2f;
+                    AudioManager.instance.grassSFxAudioSource.volume = 1;
+                }
             }
             else if (IsWallSliding())
             {
-                AudioManager.instance.walkSFxAudioSource.volume = 0;
-                AudioManager.instance.grassSFxAudioSource.pitch = 2.5f;
-                AudioManager.instance.grassSFxAudioSource.volume = 1;
+                if (AudioManager.instance.walkSFxAudioSource.volume != 0)
+                {
+                    AudioManager.instance.walkSFxAudioSource.volume = 0;
+                    AudioManager.instance.grassSFxAudioSource.pitch = 2.5f;
+                    AudioManager.instance.grassSFxAudioSource.volume = 1;
+                }    
             }
             else
             {
-                AudioManager.instance.walkSFxAudioSource.volume = 0;
-                AudioManager.instance.grassSFxAudioSource.volume = 0;
+                if (AudioManager.instance.walkSFxAudioSource.volume != 0)
+                {
+                    AudioManager.instance.walkSFxAudioSource.volume = 0;
+                    AudioManager.instance.grassSFxAudioSource.volume = 0;
+                }    
             }
 
             AudioManager.instance.windAmbientSound.volume = MathUtils.Map(transform.position.y, 25, 70, 0, 1);
@@ -647,7 +672,7 @@ namespace Platformer
         {
             isJumpingFromLedgeOrWall = true;
             float jumpVelocity = Mathf.Sqrt(-2.0f * rb.gravityScale * Physics2D.gravity.y * jumpHeight);
-            rb.velocity = new Vector2(visuals.transform.localScale.x * -jumpVelocity / 1.65f, jumpVelocity / 1.25f);
+            rb.velocity = new Vector2(visuals.transform.localScale.x * -jumpVelocity / xWallJumpForce, jumpVelocity / yWallJumpForce);
             yield return new WaitForSeconds(0.1f);
             isJumpingFromLedgeOrWall = false;
         }
@@ -871,8 +896,10 @@ namespace Platformer
                 playerAnims[i].SetBool(nameof(isWalking), IsWalking());
             for (int i = 0; i < playerAnims.Length; i++)
                 playerAnims[i].SetBool(nameof(isWalking), IsWalking());
+            //for (int i = 0; i < playerAnims.Length; i++)
+            //    playerAnims[i].speed = IsSprinting() ? 1.5f : 1.0f;
             for (int i = 0; i < playerAnims.Length; i++)
-                playerAnims[i].speed = IsSprinting() ? 1.5f : 1.0f;
+                playerAnims[i].SetBool(nameof(isSprinting), IsSprinting());
 
             if (IsWallSliding())
                 return;
@@ -988,7 +1015,7 @@ namespace Platformer
                 particleSystem.gravityModifier = 0.5f;
                 var emission = particleSystem.emission;
                 emission.SetBursts(new ParticleSystem.Burst[]{
-                new ParticleSystem.Burst(0.0f, 2)});
+                new ParticleSystem.Burst(0.0f, 1)});
                 if (isWallParticle)
                 {
                     particle.transform.Rotate(new Vector3(0, -visuals.transform.localScale.x * 90, visuals.transform.localScale.x * 90));
@@ -1052,14 +1079,14 @@ namespace Platformer
         //Camera 
         void ZoomCamera()
         {
-            if (!canZoomMap)
-                return;
+            //if (!canZoomMap)
+            //    return;
 
             float panSpeed = cameraZoomSpeed;
             if (isPlayerPanningCamera)
                 panSpeed *= 5;
 
-            if (IsSprinting() || isPlayerPanningCamera)
+            if (IsSprinting() || (canZoomMap && isPlayerPanningCamera))
             {
                 if (virtualCamera.m_Lens.OrthographicSize <= cameraZoomedOutSize)
                 {

@@ -977,7 +977,7 @@ ParticleSystem:
       countCurve:
         serializedVersion: 2
         minMaxState: 0
-        scalar: 15
+        scalar: 12
         minScalar: 30
         maxCurve:
           serializedVersion: 2
@@ -4838,7 +4838,7 @@ ParticleSystemRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 209914747
-  m_SortingLayer: 8
+  m_SortingLayer: 11
   m_SortingOrder: 5
   m_RenderMode: 0
   m_MeshDistribution: 0

@@ -41,6 +41,7 @@ public class GameManager : MonoBehaviour
     public TMP_Text fpsTxt;
     private float deltaTime = 0.0f;
     public TMP_Text heightTxt;
+    public Image arrowImg;
     public float height;
     public static GameManager instance;
 
@@ -98,10 +99,8 @@ public class GameManager : MonoBehaviour
             DOTween.To(() => globalLight.color, x => globalLight.color = x, outsideColor, changeDuration);
             skyColor.DOColor(daySkyTopColor, "_TopColor", changeDuration);
             skyColor.DOColor(daySkyBottomColor, "_BottomColor", changeDuration).OnComplete(()=> 
-                { 
-                    isNight = !isNight; 
-                    timeChanging = false; 
-                    elapsedTime = 0; 
+                {
+                    SwitchTime();
                 });
 
             backgroundDay.gameObject.SetActive(true);
@@ -117,9 +116,8 @@ public class GameManager : MonoBehaviour
             skyColor.DOColor(nightSkyTopColor, "_TopColor", changeDuration);
             skyColor.DOColor(nightSkyBottomColor, "_BottomColor", changeDuration).OnComplete(() =>
                 {
-                    isNight = !isNight;
-                    timeChanging = false;
-                    elapsedTime = 0;
+                    SwitchTime();
+
                     stars.SetActive(true);
                     backgroundNight.gameObject.SetActive(true);
                     backgroundNight.DOFade(1, 0);
@@ -156,7 +154,8 @@ public class GameManager : MonoBehaviour
         // Display FPS in the UI Text
         fpsTxt.text = string.Format("{0:0.} FPS", fps);
 
-        heightTxt.text = $"Height  {height.ToString("0")}";
+        heightTxt.text = $"{Mathf.Abs(height).ToString("0")}";
+        arrowImg.transform.rotation = (height > 0) ? new Quaternion(0, 0, 0, 0) : new Quaternion(0, 0, 180, 0);
 
     }
 
@@ -194,8 +193,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void SwitchTime(bool _isNight)
+    void SwitchTime()
     {
+        isNight = !isNight;
+        timeChanging = false;
+        elapsedTime = 0;
 
+        CodeArchitecture.EventManager.TriggerEvent(CodeArchitecture.EventName.TimeChanged, isNight);
     }
 }
