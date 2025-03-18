@@ -102,13 +102,25 @@ public class PlayerMovement : MonoBehaviour
     private void HorizontalMovement()
     {
         horizontal = joystick.Horizontal;
+        if (horizontal == 0)
+        {
+            foreach(var anim in playerAnims)
+            {
+                anim.SetBool("isWalking", false);
+            }
+            return;
+        }
+
+        foreach (var anim in playerAnims)
+        {
+            anim.SetBool("isWalking", true);
+        }
         Vector2 newPos = new Vector2(horizontal * horizontalSpeed * Time.deltaTime, 0);
         transform.Translate(newPos);
         rb.AddForce(newPos);
         //rb.velocity = new Vector2(horizontal * horizontalSpeed * Time.deltaTime, rb.velocity.y);
     }
 
-    [System.Obsolete]
     private void VariableJumping()
     {
         if (IsGrounded() && jumpBufferCounter > 0 && rb.velocity.y == 0)
@@ -180,16 +192,19 @@ public class PlayerMovement : MonoBehaviour
 
             //Jumps to a specific jump height
             rb.velocity = new Vector2(0, Mathf.Sqrt(-2.0f * rb.gravityScale * Physics2D.gravity.y * jumpHeight * jumpMultiplier));
+            
+            
+
             GameObject particle = null;
             if (jumpMultiplier == 2)
             {
-                particle = Instantiate(jumpParticleEffect, transform.GetChild(3).position, Quaternion.identity);
+                particle = Instantiate(jumpParticleEffect, transform.GetChild(3).position, Quaternion.Euler(new Vector3(-90, 0, 0)));
                 //particle.GetComponent<ParticleSystem>().startColor = Color.yellow;
                 //particle.GetComponent<ParticleSystem>().startSize = 0.6f;
             }
             else if (jumpMultiplier > 2)
             {
-                particle = Instantiate(jumpParticleEffectPerfect, transform.GetChild(3).position, Quaternion.identity);
+                particle = Instantiate(jumpParticleEffectPerfect, transform.GetChild(3).position, Quaternion.Euler(new Vector3(-90, 0, 0)));
                 //particle.GetComponent<ParticleSystem>().startColor = Color.red;
                 //particle.GetComponent<ParticleSystem>().startSize = 0.2f * jumpMultiplier;
             }
@@ -235,6 +250,37 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        foreach(var anim in playerAnims)
+        {
+            anim.SetFloat("yVelocity", rb.velocity.y);
+        }
+
+        if(isJumping)
+        {
+            //Jump Animation
+            foreach (var anim in playerAnims)
+            {
+                anim.SetInteger("velocity", 1);
+                anim.SetBool("IsGrounded", false);
+            }
+        }
+        else
+        {
+            foreach (var anim in playerAnims)
+            {
+                anim.SetInteger("velocity", 0);
+                anim.SetBool("IsGrounded", true);
+            }
+        }
+
+        //if(rb.velocity.y < 0)
+        //{
+        //    foreach(var anim in playerAnims)
+        //    {
+        //        anim.SetFloat("yVelocity", 0);
+        //        anim.SetBool("IsGrounded", false);
+        //    }
+        //}
     }
 
     public bool IsGrounded()
@@ -247,6 +293,7 @@ public class PlayerMovement : MonoBehaviour
         {
             if (Physics2D.OverlapCircle(ground.position, 0.2f, groundLayer))
             {
+                
                 return true;
             }
         }
