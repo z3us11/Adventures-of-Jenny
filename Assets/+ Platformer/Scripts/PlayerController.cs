@@ -114,6 +114,7 @@ namespace Platformer
         [Header("UI")]
         public AbilityUnlockPanel abilityUnlockPanel;
         public Toggle mobileControlsToggle;
+        bool uiActive;
 
         [Space]
         [Header("Other Scripts")]
@@ -310,34 +311,44 @@ namespace Platformer
             }
 
             //Sound Fx
-            if (isWalking || isWallRunning)
+            if (!uiActive)
             {
-                if (AudioManager.instance.walkSFxAudioSource.volume != 0.75f)
+                if (isWalking || isWallRunning)
                 {
-                    AudioManager.instance.walkSFxAudioSource.volume = 0.75f;
-                    AudioManager.instance.grassSFxAudioSource.pitch = 2f;
-                    AudioManager.instance.grassSFxAudioSource.volume = 1;
+                    if (AudioManager.instance.walkSFxAudioSource.volume != 0.75f)
+                    {
+                        AudioManager.instance.walkSFxAudioSource.volume = 0.75f;
+                        AudioManager.instance.grassSFxAudioSource.pitch = 2f;
+                        AudioManager.instance.grassSFxAudioSource.volume = 1;
+                    }
                 }
-            }
-            else if (IsWallSliding())
-            {
-                if (AudioManager.instance.walkSFxAudioSource.volume != 0)
+                else if (IsWallSliding())
                 {
-                    AudioManager.instance.walkSFxAudioSource.volume = 0;
-                    AudioManager.instance.grassSFxAudioSource.pitch = 2.5f;
-                    AudioManager.instance.grassSFxAudioSource.volume = 1;
-                }    
+                    if (AudioManager.instance.walkSFxAudioSource.volume != 0)
+                    {
+                        AudioManager.instance.walkSFxAudioSource.volume = 0;
+                        AudioManager.instance.grassSFxAudioSource.pitch = 2.5f;
+                        AudioManager.instance.grassSFxAudioSource.volume = 1;
+                    }
+                }
+                else
+                {
+                    if (AudioManager.instance.walkSFxAudioSource.volume != 0)
+                    {
+                        AudioManager.instance.walkSFxAudioSource.volume = 0;
+                        AudioManager.instance.grassSFxAudioSource.volume = 0;
+                    }
+                }
+
+                AudioManager.instance.windAmbientSound.volume = MathUtils.Map(transform.position.y, 25, 70, 0, 1);
             }
             else
             {
-                if (AudioManager.instance.walkSFxAudioSource.volume != 0)
-                {
-                    AudioManager.instance.walkSFxAudioSource.volume = 0;
-                    AudioManager.instance.grassSFxAudioSource.volume = 0;
-                }    
+                AudioManager.instance.walkSFxAudioSource.volume = 0;
+                AudioManager.instance.grassSFxAudioSource.volume = 0;
             }
+                
 
-            AudioManager.instance.windAmbientSound.volume = MathUtils.Map(transform.position.y, 25, 70, 0, 1);
 
             if (!canPlayerMove)
                 return;
@@ -958,6 +969,8 @@ namespace Platformer
 
         public void UnlockAbility(AbilityType ability)
         {
+            uiActive = true;
+
             if (ability == AbilityType.LedgeGrab)
             {
                 canLedgeGrab = true;
@@ -991,6 +1004,12 @@ namespace Platformer
             }
         }
 
+        public void UIInActive()
+        {
+            abilityUnlockPanel.gameObject.SetActive(false);
+            uiActive = false;
+        }
+
         //Effects
         private void SpawnGrassParticle(Transform location, bool isWalkParticle = false, bool isWallParticle = false)
         {
@@ -1015,7 +1034,7 @@ namespace Platformer
                 particleSystem.gravityModifier = 0.5f;
                 var emission = particleSystem.emission;
                 emission.SetBursts(new ParticleSystem.Burst[]{
-                new ParticleSystem.Burst(0.0f, 1)});
+                new ParticleSystem.Burst(0.0f, 2)});
                 if (isWallParticle)
                 {
                     particle.transform.Rotate(new Vector3(0, -visuals.transform.localScale.x * 90, visuals.transform.localScale.x * 90));
