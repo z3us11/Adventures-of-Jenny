@@ -1,3 +1,4 @@
+
 // The SteamManager is designed to work with Steamworks.NET
 // This file is released into the public domain.
 // Where that dedication is not recognized you are granted a perpetual,
@@ -22,6 +23,8 @@ using Steamworks;
 [DisallowMultipleComponent]
 public class SteamManager : MonoBehaviour {
 #if !DISABLESTEAMWORKS
+#if !UNITY_ANDROID && !UNITY_WEBGL
+
 	protected static bool s_EverInitialized = false;
 
 	protected static SteamManager s_instance;
@@ -179,4 +182,6 @@ public class SteamManager : MonoBehaviour {
 		}
 	}
 #endif // !DISABLESTEAMWORKS
+#endif
 }
+

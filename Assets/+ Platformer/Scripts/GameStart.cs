@@ -3,30 +3,44 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class GameStart : MonoBehaviour
+namespace Platformer
 {
-    public TMP_Text pressStartTxt;
-    public Image fadeOut;
-
-    private void Start()
+    public class GameStart : MonoBehaviour
     {
-        pressStartTxt.DOFade(0, 1f).OnComplete(() => pressStartTxt.DOFade(1, 1f)).SetLoops(-1, LoopType.Yoyo);
-    }
+        public TMP_Text pressStartTxt;
+        public Image fadeOut;
 
-    private void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Return))
+        bool startPressed;
+
+        private void Start()
         {
-           SwitchScene();
-            
+            pressStartTxt.DOFade(0, 1f).OnComplete(() => pressStartTxt.DOFade(1, 1f)).SetLoops(-1, LoopType.Yoyo);
+        }
+
+        void OnStart(InputValue inputValue)
+        {
+            startPressed = inputValue.Get<float>() != 0 ? true : false;
+        }
+
+        private void Update()
+        {
+            if (startPressed)
+            {
+                SwitchScene();
+                startPressed = false;
+                return;
+            }
+        }
+
+        public void SwitchScene()
+        {
+            fadeOut.DOFade(1, 1f).OnComplete(() => SceneManager.LoadScene("Platformer"));
         }
     }
 
-    public void SwitchScene()
-    {
-        fadeOut.DOFade(1, 1f).OnComplete(() => SceneManager.LoadScene("Platformer"));
-    }
 }
+

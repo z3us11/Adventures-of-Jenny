@@ -28,7 +28,7 @@ namespace Platformer
         float yInput = 0;
         bool isSprintPressed = false;
         bool isJumpPressed = false;
-        
+
         [Header("Movement")]
         [SerializeField] float walkVelocity = 5f;
         [SerializeField] float walkAcceleration = 10f;
@@ -142,14 +142,14 @@ namespace Platformer
 
         private Rigidbody2D rb;
         private Animator perfectJumpAnim;
-        
+
 
         private void Awake()
         {
             rb = GetComponent<Rigidbody2D>();
             totalLives = lives.Length;
 
-            
+
         }
 
         private void Start()
@@ -158,6 +158,8 @@ namespace Platformer
 
             AudioManager.instance.walkSFxAudioSource.playOnAwake = true;
             AudioManager.instance.grassSFxAudioSource.playOnAwake = true;
+
+            virtualCamera.m_Lens.OrthographicSize = cameraZoomedInSize;
         }
 
         void OnMoveX(InputValue inputValue)
@@ -200,7 +202,7 @@ namespace Platformer
 
         public void Map(bool open)
         {
-            if(!canViewMap) return;
+            if (!canViewMap) return;
 
             if (open)
             {
@@ -268,14 +270,14 @@ namespace Platformer
             float currentVelocity = rb.velocity.x;
             float deltaVelocity = targetVelocity - currentVelocity;
 
-            if(isOther)
+            if (isOther)
             {
                 if (!isGrounded && xInput == 0)
                 {
                     return;
                 }
             }
-            
+
 
             // Clamp the delta velocity to acceleration
 
@@ -347,7 +349,7 @@ namespace Platformer
                 AudioManager.instance.walkSFxAudioSource.volume = 0;
                 AudioManager.instance.grassSFxAudioSource.volume = 0;
             }
-                
+
 
 
             if (!canPlayerMove)
@@ -371,7 +373,7 @@ namespace Platformer
                 //Effects
                 StartCoroutine(WalkParticles(playerGround));
 
-               
+
 
             }
 
@@ -649,7 +651,7 @@ namespace Platformer
         void ApplyJumpForce(bool isNormalJump = true)
         {
             AudioManager.instance.PlaySoundFx(AudioManager.SoundFxs.Jump);
-            if(isPerfectJump)
+            if (isPerfectJump)
                 AudioManager.instance.PlaySoundFx(AudioManager.SoundFxs.PerfectJump);
 
             StartCoroutine(IsJumping());
@@ -990,7 +992,7 @@ namespace Platformer
                 canvas.SetActive(true);
             }
 
-            else if(ability == AbilityType.ZoomMap)
+            else if (ability == AbilityType.ZoomMap)
             {
                 canZoomMap = true;
             }
@@ -1048,6 +1050,10 @@ namespace Platformer
                     var particleSystem = particle.GetComponent<ParticleSystem>();
                     particle.transform.Rotate(new Vector3(0, -visuals.transform.localScale.x * 90, visuals.transform.localScale.x * 90));
                     particleSystem.startSpeed = 1;
+                    particleSystem.gravityModifier = 0.1f;
+                    var emission = particleSystem.emission;
+                    emission.SetBursts(new ParticleSystem.Burst[]{
+                new ParticleSystem.Burst(0.0f, 7)});
 
                 }
             }
@@ -1107,14 +1113,14 @@ namespace Platformer
 
             if (IsSprinting() || (canZoomMap && isPlayerPanningCamera))
             {
-                if (virtualCamera.m_Lens.OrthographicSize <= cameraZoomedOutSize)
+                if (virtualCamera.m_Lens.OrthographicSize < cameraZoomedOutSize)
                 {
                     virtualCamera.m_Lens.OrthographicSize += Time.deltaTime * panSpeed;
                 }
             }
             else
             {
-                if (virtualCamera.m_Lens.OrthographicSize >= cameraZoomedInSize)
+                if (virtualCamera.m_Lens.OrthographicSize > cameraZoomedInSize)
                 {
                     virtualCamera.m_Lens.OrthographicSize -= Time.deltaTime * panSpeed * 5;
                 }

@@ -250,7 +250,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &135629003
 Transform:
   m_ObjectHideFlags: 0
@@ -288,7 +288,7 @@ MonoBehaviour:
   checkpointPlatformSize: 7
   shouldIncreaseDifficulty: 0
   platformStartPosition: {x: 0, y: -9}
-  distanceBetweenPlatforms: 3
+  distanceBetweenPlatforms: 2
   platformStartSize: 2
   platformEndSize: 3
   platformPosX: 1
@@ -4445,6 +4445,10 @@ PrefabInstance:
       propertyPath: joystick
       value: 
       objectReference: {fileID: 1451814170}
+    - target: {fileID: 4235802583874429233, guid: 42cd7f6ebcd25e44cbe38ee297cb77b4, type: 3}
+      propertyPath: jumpHeight
+      value: 1.5
+      objectReference: {fileID: 0}
     - target: {fileID: 4235802583874429233, guid: 42cd7f6ebcd25e44cbe38ee297cb77b4, type: 3}
       propertyPath: jumpParticleEffect
       value: 
