@@ -7,6 +7,9 @@ using static Unity.VisualScripting.Member;
 
 public class AudioManager : MonoBehaviour
 {
+    [Header("Music")]
+    public AudioSource music;
+    [Header("Sound Fxs")]
     public AudioSource walkSFxAudioSource;
     public AudioSource grassSFxAudioSource;
     public AudioSource collectSFxAudioSource;
@@ -14,15 +17,18 @@ public class AudioManager : MonoBehaviour
     public AudioSource doorOpenAudioSource;
     public AudioSource jumpSFxAudioSource;
     public AudioSource perfectJumpSFxAudioSource;
+    [Space]
+    public AudioClip[] collectSoundFxs;
+    public AudioClip[] perfectJumpSoundFxs;
+    public SoundFxAudio[] soundFxs;
+    [Header("Ambient Sounds")]
     public AudioSource dayAmbientSound;
     public AudioSource nightAmbientSound;
     public AudioSource windAmbientSound;
     public AudioSource caveAmbientSound;
-    public AudioSource music;
 
-    public AudioClip[] collectSoundFxs;
-    public AudioClip[] perfectJumpSoundFxs;
-    public SoundFxAudio[] soundFxs;
+    bool canPlaySounds;
+    bool canPlayMusic;
 
     List<AudioSource> collectAudioSrcs = new List<AudioSource>();
 
@@ -61,19 +67,54 @@ public class AudioManager : MonoBehaviour
         }
     }
 
+    public void CanPlaySounds(bool value)
+    {
+        canPlaySounds = value;
+    }
+
+    public void CanPlayMusic(bool value)
+    {
+        canPlayMusic = value;
+        if (canPlayMusic)
+        {
+            music.enabled = true;
+            dayAmbientSound.enabled = true;
+            nightAmbientSound.enabled = true;
+            windAmbientSound.enabled = true;
+            caveAmbientSound.enabled = true;
+        }
+        else
+        {
+            music.enabled = false;
+            dayAmbientSound.enabled = false;
+            nightAmbientSound.enabled = false;
+            windAmbientSound.enabled = false;
+            caveAmbientSound.enabled = false;
+        }
+    }
+
 
     public void PlayDoorOpenSound()
     {
+        if (!canPlaySounds)
+            return;
+
         doorOpenAudioSource.Play();
     }
 
     public void PlayAbilityCollectFx()
     {
+        if (!canPlaySounds)
+            return;
+
         abilityCollectSFxAudioSource.Play();
     }
 
     public void PlayCollectFx()
     {
+        if (!canPlaySounds)
+            return;
+
         foreach (AudioSource source in collectAudioSrcs)
         {
             if (!source.isPlaying)
@@ -96,6 +137,9 @@ public class AudioManager : MonoBehaviour
 
     public void PlaySoundFx(SoundFxs soundFx)
     {
+        if (!canPlaySounds)
+            return;
+
         if (soundFx == SoundFxs.Jump)
         {
             jumpSFxAudioSource.clip = soundFxs[0].sFxAudioClip;
@@ -124,6 +168,9 @@ public class AudioManager : MonoBehaviour
 
     public void PlaySoundFx(SoundFxs soundFx, float pitch)
     {
+        if (!canPlaySounds)
+            return;
+
         if (soundFx == SoundFxs.GrassWalk)
         {
             walkSFxAudioSource.pitch = 1.5f;
@@ -135,6 +182,9 @@ public class AudioManager : MonoBehaviour
 
     public void SwitchDay(bool isNight, float time)
     {
+        if (!canPlayMusic)
+            return;
+
         if (!isNight)
         {
             dayAmbientSound.DOFade(0.3f, time);

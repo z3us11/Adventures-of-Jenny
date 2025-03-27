@@ -540,6 +540,56 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "menu",
+            "id": "caefc88e-8ea5-489a-be8e-f58b50fe742e",
+            "actions": [
+                {
+                    "name": "pause",
+                    "type": "Button",
+                    "id": "ed5e46bb-f765-40c6-8a05-5a387d9f577a",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "4cbee5b5-964d-408c-8ffd-cdd189e4b2c5",
+                    "path": "<Keyboard>/numpadEnter",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "add06c0d-6245-4c37-bd71-8cf2d0981969",
+                    "path": "<Keyboard>/enter",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "fe427a0e-88b3-4bd1-a7e1-e2f7656c7cc0",
+                    "path": "<Gamepad>/start",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [
